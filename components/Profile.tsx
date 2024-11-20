@@ -1,4 +1,5 @@
 'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
     DropdownMenu,
@@ -25,12 +26,13 @@ export default function UserMenu() {
     const user = {
         name: customerInfo?.firstName + ' ' + customerInfo?.lastName,
         email: customerInfo?.email
-        // image: 'https://github.com/shadcn.png' // URL ảnh demo
     }
 
     const handleLogout = () => {
-        // Xử lý logout ở đây
-        console.log('Logging out...')
+        localStorage.removeItem('user')
+        window.dispatchEvent(new Event('authStateChange'))
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
     }
 
     return (

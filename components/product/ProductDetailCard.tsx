@@ -5,10 +5,8 @@ import { ProductDetail } from '@/interface/product.interface'
 import AddToCartButton from '../cart/AddToCartButton'
 
 export default function ProductDetailCard({ product }: { product: ProductDetail }) {
-    // State để lưu các thuộc tính đã chọn
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
 
-    // Tạo danh sách các thuộc tính duy nhất từ các biến thể
     const uniqueAttributes = useMemo(() => {
         const attributes: Record<string, Set<string>> = {}
 
@@ -27,7 +25,6 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
         }))
     }, [product.productVariants])
 
-    // Tìm biến thể phù hợp với các thuộc tính đã chọn
     const selectedVariant = useMemo(() => {
         if (Object.keys(selectedAttributes).length !== uniqueAttributes.length) {
             return null
@@ -38,7 +35,6 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
         )
     }, [selectedAttributes, product.productVariants, uniqueAttributes.length])
 
-    // Xử lý khi chọn thuộc tính
     const handleAttributeSelect = (attributeName: string, value: string) => {
         setSelectedAttributes((prev) => ({
             ...prev,
@@ -46,21 +42,49 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
         }))
     }
 
+    const displayPrice = useMemo(() => {
+        if (selectedVariant) {
+            return {
+                unitPrice: selectedVariant.unitPrice,
+                discountPrice: selectedVariant.discountPrice
+            }
+        }
+        return {
+            unitPrice: product.unitPrice,
+            discountPrice: product.discountPrice
+        }
+    }, [selectedVariant, product])
+
     return (
         <section className='flex w-full flex-col py-4 md:flex-row'>
             <ProductCarousel product={product} />
             <div className='flex w-full flex-col space-y-2 px-0 py-2 md:w-1/2 md:px-4 lg:px-12'>
                 <h1 className='p-2 text-xl font-bold md:text-2xl'>{product.name}</h1>
                 <div className='flex items-center'>
-                    <h2 className='p-2 text-xl font-medium text-primary'>Price: &#36; {product.discountPrice}</h2>
-                    <div className='ml-2 line-through text-sm text-gray-500'>&#36; {product.unitPrice}</div>
-                    <p className='text-xs ml-2 bg-red-200 text-red-600 p-[3px] rounded-sm'>
-                        -{Math.round(((product.unitPrice - product.discountPrice) / product.unitPrice) * 100)}%
-                    </p>
+                    {displayPrice.discountPrice > 0 ? (
+                        <>
+                            <h2 className='p-2 text-xl font-medium text-primary'>
+                                Price: &#36; {displayPrice.discountPrice}
+                            </h2>
+                            <div className='ml-2 line-through text-sm text-gray-500'>
+                                &#36; {displayPrice.unitPrice}
+                            </div>
+                            <p className='text-xs ml-2 bg-red-200 text-red-600 p-[3px] rounded-sm'>
+                                -
+                                {Math.round(
+                                    ((displayPrice.unitPrice - displayPrice.discountPrice) / displayPrice.unitPrice) *
+                                        100
+                                )}
+                                %
+                            </p>
+                        </>
+                    ) : (
+                        <h2 className='p-2 text-xl font-medium text-primary'>Price: &#36; {displayPrice.unitPrice}</h2>
+                    )}
                 </div>
 
                 {/* Hiển thị các thuộc tính */}
-                <div className='space-y-4 mt-4'>
+                <div className='space-y-4 mt-4 p-2'>
                     {uniqueAttributes.map(({ name, values }) => (
                         <div key={name} className='space-y-2'>
                             <h3 className='font-medium'>{name}:</h3>
@@ -89,7 +113,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                 </div>
 
                 <div className='pt-2'>
-                    <AddToCartButton product={product} />
+                    {/* <AddToCartButton product={product} selectedVariant={selectedVariant} /> */}
                 </div>
             </div>
         </section>

@@ -27,6 +27,8 @@ interface ProductVariantResponse {
     id: number
     attributes: AttributeValue[]
     quantity: number
+    unitPrice: number
+    discountPrice: number
 }
 
 interface AttributeValue {

@@ -1,9 +1,9 @@
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { Category } from '@/lib/types'
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import SearchInput from './SearchInput'
 import { Button } from './ui/button'
+import { Category } from '@/interface/category.interface'
 
 export default async function MenuSheet({ categories }: { categories: Category[] }) {
     return (
@@ -28,7 +28,7 @@ export default async function MenuSheet({ categories }: { categories: Category[]
                     </SheetClose>
                     {categories.map((category: Category, index: number) => (
                         <SheetClose asChild key={index}>
-                            <Link href={`/category/${category.slug.current}`}>
+                            <Link href={`/category/${category.slug}`}>
                                 <Button className='text-lg' variant='ghost'>
                                     {category.name}
                                 </Button>
