@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { PlusCircle, Pencil, Trash2 } from 'lucide-react'
@@ -55,8 +55,8 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
     const [editingAddress, setEditingAddress] = useState<Address | null>(null)
 
     const loadAddresses = async () => {
-        const response = await addressService.getAll(customer.id)
-        setAddresses(response)
+        const { payload: response } = await addressService.getAll(customer.id)
+        // setAddresses(response)
     }
 
     const form = useForm<z.infer<typeof addressSchema>>({

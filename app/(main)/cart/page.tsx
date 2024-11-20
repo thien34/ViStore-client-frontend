@@ -1,14 +1,11 @@
 'use client'
 
 export const runtime = 'edge'
-
-import { sendInvoiceAction } from '@/app/(main)/actions'
 import CartOrderTable from '@/components/cart/CartOrderTable'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
-import { checkoutFormSchema } from '@/lib/types'
 import { useCartStore } from '@/store/useCartStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'

@@ -1,4 +1,3 @@
-// app/profile/components/order-history.tsx
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'

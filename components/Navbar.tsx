@@ -8,9 +8,8 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu'
+import { Category } from '@/interface/category.interface'
 import Link from 'next/link'
-
-import { Category } from '@/lib/types'
 
 export default function Navbar({ categories }: { categories: Category[] }) {
     return (
@@ -27,7 +26,7 @@ export default function Navbar({ categories }: { categories: Category[] }) {
                         <ul className='grid w-max grid-cols-2 gap-2 p-2'>
                             {categories.map((category: Category, index: number) => (
                                 <li key={index}>
-                                    <Link href={`/category/${category.slug.current}`} legacyBehavior passHref>
+                                    <Link href={`/category/${category.slug}`} legacyBehavior passHref>
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                             {category.name}
                                         </NavigationMenuLink>

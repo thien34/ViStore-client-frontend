@@ -1,4 +1,3 @@
-// app/profile/components/password-change.tsx
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
