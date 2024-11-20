@@ -1,15 +1,14 @@
 'use client'
-
 import { useToast } from '@/components/ui/use-toast'
-import { Product } from '@/lib/types'
 import { Actions, State, useCartStore } from '@/store/useCartStore'
 import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
 import { ToastAction } from '../ui/toast'
+import { ProductDetail } from '@/interface/product.interface'
 
-export default function AddToCartButton({ product }: { product: Product }) {
+export default function AddToCartButton({ product }: { product: ProductDetail }) {
     const { toast } = useToast()
     const { addToCart, cart }: Actions & State = useCartStore()
     const router = useRouter()
@@ -21,7 +20,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
     const productInCart = cart.find((item) => item.id === product.id)
 
     const handleAddToCart = () => {
-        addToCart(cartProduct)
+        // addToCart(cartProduct)
         toast({
             title: 'Item added to cart!',
             action: (
@@ -35,7 +34,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
 
     const handleBuyNow = () => {
         if (productInCart?.quantity === undefined) {
-            addToCart(cartProduct)
+            // addToCart(cartProduct)
         }
         router.push('/cart')
     }

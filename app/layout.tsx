@@ -1,12 +1,9 @@
-import FloatingBar from '@/components/FloatingBar'
-import Footer from '@/components/Footer'
-import Header from '@/components/Header'
-import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
-import ViStore from '../public/ViStore.png'
+import ViStore from '@/public/ViStore.png'
 import './globals.css'
+
 import {
     SITE_CATEGORY,
     SITE_DESCRIPTION,
@@ -17,7 +14,12 @@ import {
     SITE_TITLE
 } from '@/lib/constants'
 
-const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const inter = Inter({
+    subsets: ['latin'],
+    variable: '--font-sans',
+    weight: ['400', '500', '600', '700'],
+    display: 'swap'
+})
 
 export const viewport: Viewport = {
     themeColor: [
@@ -50,7 +52,6 @@ export const metadata: Metadata = {
             }
         ]
     },
-
     icons: {
         icon: ViStore.src,
         shortcut: ViStore.src
@@ -60,14 +61,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang='en' suppressHydrationWarning>
-            <body className={cn('min-h-svh bg-background font-sans antialiased', fontSans.className)}>
-                <main className='mx-auto max-w-7xl'>
-                    <Header />
-                    {children}
-                    <Footer />
-                </main>
-                <FloatingBar />
-                <Toaster />
+            <body className={cn('min-h-svh bg-background antialiased', inter.variable, inter.className)}>
+                <main className='mx-auto max-w-7xl'>{children}</main>
             </body>
         </html>
     )

@@ -1,11 +1,11 @@
 'use client'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
-import { Product } from '@/lib/types'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 import { AspectRatio } from '../ui/aspect-ratio'
+import { ProductDetail } from '@/interface/product.interface'
 
-export default function ProductCarousel({ product }: { product: Product }) {
+export default function ProductCarousel({ product }: { product: ProductDetail }) {
     return (
         <div className='flex-1 md:w-1/2'>
             <Carousel

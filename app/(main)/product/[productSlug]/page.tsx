@@ -1,9 +1,8 @@
 import ProductDetailCard from '@/components/product/ProductDetailCard'
+import ProductDetailInfo from '@/components/product/ProductDetailInfo'
 import ProductsMarqueeWrapper from '@/components/product/ProductsMarqueeWrapper'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
-import { Product } from '@/lib/types'
-import { getProductBySlug, getProductsSlug } from '@/sanity/lib/sanity.query'
-import type { Metadata, ResolvingMetadata } from 'next'
+import productService from '@/service/product.service'
 
 export const dynamicParams = false
 
@@ -11,47 +10,15 @@ type Props = {
     params: { productSlug: string }
 }
 
-type ProductSlug = {
-    slug: {
-        current: string
-    }
-}
-
-export async function generateStaticParams() {
-    const productSlugs = await getProductsSlug()
-    return productSlugs.map((productSlug: ProductSlug) => {
-        return {
-            productSlug: productSlug.slug.current
-        }
-    })
-}
-
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
-    const product: Product = await getProductBySlug(params.productSlug)
-
-    const previousImages = (await parent).openGraph?.images || []
-
-    return {
-        title: product.name,
-        alternates: {
-            canonical: `/product/${params.productSlug}`
-        },
-        description: product.features,
-        openGraph: {
-            images: [product.images[0], ...previousImages]
-        }
-    }
-}
-
 const ProductPage = async ({ params }: Props) => {
-    const product: Product = await getProductBySlug(params.productSlug)
+    const { payload: product } = await productService.getProducDetailtBySlug(params.productSlug)
 
     const jsonLd = {
         '@context': SITE_URL,
         '@type': 'Product',
         name: product.name,
         image: product.images[0],
-        description: product.features,
+        description: product.fullDescription,
         brand: {
             '@type': 'Brand',
             name: SITE_NAME
@@ -62,6 +29,7 @@ const ProductPage = async ({ params }: Props) => {
         <div className='px-2'>
             <ProductDetailCard product={product} />
             <ProductsMarqueeWrapper />
+            <ProductDetailInfo product={product} />
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         </div>
     )

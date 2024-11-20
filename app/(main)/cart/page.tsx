@@ -2,7 +2,7 @@
 
 export const runtime = 'edge'
 
-import { sendInvoiceAction } from '@/app/actions'
+import { sendInvoiceAction } from '@/app/(main)/actions'
 import CartOrderTable from '@/components/cart/CartOrderTable'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'

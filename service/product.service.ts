@@ -1,4 +1,4 @@
-import { Product } from '@/interface/product.interface'
+import { Product, ProductDetail } from '@/interface/product.interface'
 import http from '@/lib/http'
 
 class ProductService {
@@ -11,6 +11,11 @@ class ProductService {
 
     async getProductsByCategory(categorySlug: string) {
         const response = await http.get<Product[]>(`${this.basePath}/${categorySlug}`)
+        return response
+    }
+
+    async getProducDetailtBySlug(productSlug: string) {
+        const response = await http.get<ProductDetail>(`${this.basePath}/product/${productSlug}`)
         return response
     }
 }

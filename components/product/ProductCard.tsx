@@ -28,8 +28,7 @@ export default function ProductCard({ product }: { product: Product }) {
                         <div className='flex'>
                             <p className='font-medium text-primary'>&#36; {product.discountPrice}</p>
                             <p className='text-xs ml-1 bg-red-200 text-red-600 p-[3px] rounded-sm'>
-                                {Math.round(((product.unitPrice - product.discountPrice) / product.unitPrice) * 100)}%
-                                off
+                                -{Math.round(((product.unitPrice - product.discountPrice) / product.unitPrice) * 100)}%
                             </p>
                         </div>
                     ) : (

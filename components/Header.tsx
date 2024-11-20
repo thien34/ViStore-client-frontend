@@ -5,6 +5,7 @@ import MenuSheet from './MenuSheet'
 import Navbar from './Navbar'
 import SearchInput from './SearchInput'
 import { SITE_NAME } from '@/lib/constants'
+import UserMenu from './Profile'
 
 export default async function Header() {
     const categories = await getCategories()
@@ -21,6 +22,7 @@ export default async function Header() {
                         <SearchInput />
                     </div>
                     <CartSheet />
+                    <UserMenu />
                 </div>
             </nav>
         </header>
