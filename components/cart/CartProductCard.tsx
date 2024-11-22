@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 import { Card, CardContent } from '../ui/card'
+import { CartResponse } from '@/interface/cart.interface'
 
 export default function CartProductCard({
     product,
@@ -11,16 +12,16 @@ export default function CartProductCard({
     removeFromCart,
     deleteFromCart
 }: {
-    addToCart: (Item: Product) => void
-    removeFromCart: (Item: Product) => void
-    deleteFromCart: (Item: Product) => void
-} & { product: Product }) {
+    addToCart: (Item: CartResponse) => void
+    removeFromCart: (Item: CartResponse) => void
+    deleteFromCart: (Item: CartResponse) => void
+} & { product: CartResponse }) {
     return (
         <Card className='mb-2 p-1'>
             <CardContent className='grid w-full grid-cols-[auto_1fr] p-0'>
-                <Link className='min-w-fit' href={`/product/${product.slug.current}`}>
+                <Link className='min-w-fit' href={`/product/${product.slug}`}>
                     <Image
-                        src={product.images[0]}
+                        src={product.image}
                         width={100}
                         height={100}
                         alt={product.name}
@@ -31,7 +32,7 @@ export default function CartProductCard({
                 <div className='flex flex-col justify-between gap-2 pl-2 md:pl-4'>
                     <div className='w-full'>
                         <div className='line-clamp-2 text-sm font-medium leading-tight'>{product.name}</div>
-                        <div className='mt-1 text-sm text-primary opacity-95'>₹{product.price}</div>
+                        <div className='mt-1 text-sm text-primary opacity-95'>₹{product.unitPrice}</div>
                     </div>
                     <div className='flex flex-row items-center justify-end gap-1'>
                         <div className='flex w-min flex-row gap-1 rounded-lg border p-1'>
