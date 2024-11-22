@@ -1,5 +1,5 @@
 export interface CartResponse {
-    id?: number
+    id: number
     idProduct: number
     slug: string
     name: string
@@ -13,4 +13,8 @@ export interface CartRequest {
     productId: number
     quantity: number
     customerId: number
+}
+
+export interface CartUpdateRequest {
+    quantity: number
 }

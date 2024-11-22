@@ -1,95 +1,93 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import { CartRequest, CartResponse, CartUpdateRequest } from '@/interface/cart.interface'
+import cartService from '@/service/cart.service'
 
-export type Product = {
-    id: number
-    name: string
-    slug: {
-        current: string
-    }
-    price: number
-    images: any
-    quantity: number
-}
+interface CartState {
+    items: CartResponse[]
+    isOpen: boolean
+    loading: boolean
 
-export type State = {
-    cart: Product[]
-    totalItems: number
-    totalAmount: number
-}
-
-export type Actions = {
-    addToCart: (Item: Product) => void
-    removeFromCart: (Item: Product) => void
-    deleteFromCart: (Item: Product) => void
+    // Actions
+    setIsOpen: (open: boolean) => void
+    fetchCart: (customerId: number) => Promise<void>
+    addToCart: (cartRequest: CartRequest) => Promise<void>
+    updateQuantity: (customerId: number, cartId: number, quantity: number) => Promise<void>
+    deleteFromCart: (customerId: number, cartId: number) => Promise<void>
     clearCart: () => void
 }
 
-const INITIAL_STATE = {
-    cart: [],
-    totalItems: 0,
-    totalAmount: 0
-}
-
-export const useCartStore = create(
-    persist<State & Actions>(
+export const useCartStore = create<CartState>()(
+    persist(
         (set, get) => ({
-            cart: INITIAL_STATE.cart,
-            totalItems: INITIAL_STATE.totalItems,
-            totalAmount: INITIAL_STATE.totalAmount,
-            addToCart: (product: Product) => {
-                const cart = get().cart
-                const cartItem = cart.find((item: Product) => item.slug.current === product.slug.current)
-                if (cartItem) {
-                    const updatedCart = cart.map((item) =>
-                        item.slug.current === product.slug.current ? { ...item, quantity: item.quantity + 1 } : item
-                    )
-                    set((state) => ({
-                        cart: updatedCart,
-                        totalItems: state.totalItems + 1,
-                        totalAmount: Math.max(state.totalAmount + product.price, 0)
-                    }))
-                } else {
-                    const updatedCart = [...cart, { ...product, quantity: 1 }]
+            items: [],
+            isOpen: false,
+            loading: false,
 
-                    set((state) => ({
-                        cart: updatedCart,
-                        totalItems: state.totalItems + 1,
-                        totalAmount: Math.max(state.totalAmount + product.price, 0)
-                    }))
+            setIsOpen: (open) => set({ isOpen: open }),
+
+            fetchCart: async (customerId) => {
+                try {
+                    set({ loading: true })
+                    const response = await cartService.getAll(customerId)
+                    set({ items: response.payload })
+                } catch (error) {
+                    console.error('Failed to fetch cart:', error)
+                } finally {
+                    set({ loading: false })
                 }
             },
-            removeFromCart: (product: Product) => {
-                const cart = get().cart
-                const cartItem = cart.find((item: Product) => item.slug.current === product.slug.current)
-                if (cartItem) {
-                    const updatedCart = cart
-                        .map((item) =>
-                            item.slug.current === product.slug.current ? { ...item, quantity: item.quantity - 1 } : item
-                        )
-                        .filter((item) => item.quantity > 0)
-                    set((state) => ({
-                        cart: updatedCart,
-                        totalItems: state.totalItems - 1,
-                        totalAmount: Math.max(state.totalAmount - product.price, 0)
-                    }))
+
+            addToCart: async (cartRequest) => {
+                try {
+                    set({ loading: true })
+                    await cartService.create(cartRequest)
+                    // Fetch updated cart
+                    const response = await cartService.getAll(cartRequest.customerId)
+                    set({ items: response.payload })
+                } catch (error) {
+                    console.error('Failed to add to cart:', error)
+                    throw error
+                } finally {
+                    set({ loading: false })
                 }
             },
-            deleteFromCart: (product: Product) => {
-                const cart = get().cart
-                const updatedCart = cart.filter((item) => item.slug.current !== product.slug.current)
-                set((state) => ({
-                    cart: updatedCart,
-                    totalItems: state.totalItems - product.quantity,
-                    totalAmount: Math.max(state.totalAmount - product.price * product.quantity, 0)
-                }))
+
+            deleteFromCart: async (customerId, cartId) => {
+                try {
+                    set({ loading: true })
+                    await cartService.delete(cartId)
+                    // Fetch updated cart
+                    const response = await cartService.getAll(customerId)
+                    set({ items: response.payload })
+                } catch (error) {
+                    console.error('Failed to remove from cart:', error)
+                    throw error
+                } finally {
+                    set({ loading: false })
+                }
             },
-            clearCart: () => {
-                set(INITIAL_STATE)
-            }
+
+            updateQuantity: async (customerId, cartId, quantity) => {
+                try {
+                    set({ loading: true })
+                    await cartService.update(cartId, { quantity })
+                    // Fetch updated cart
+                    const response = await cartService.getAll(customerId)
+                    set({ items: response.payload })
+                } catch (error) {
+                    console.error('Failed to update quantity:', error)
+                    throw error
+                } finally {
+                    set({ loading: false })
+                }
+            },
+
+            clearCart: () => set({ items: [] })
         }),
         {
-            name: 'cart'
+            name: 'cart-storage',
+            storage: createJSONStorage(() => localStorage)
         }
     )
 )

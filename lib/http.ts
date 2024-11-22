@@ -39,6 +39,7 @@ const http = {
 
     put: <Response>(path: string, data: unknown, config?: RequestInit) =>
         httpInstance<Response>(path, 'PUT', data, config),
+
     delete: <Response>(path: string, config?: RequestInit) => httpInstance<Response>(path, 'DELETE', undefined, config),
 
     postFromData: async <Response>(path: string, data: FormData, config?: RequestInit) => {

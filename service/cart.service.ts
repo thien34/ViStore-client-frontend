@@ -1,4 +1,4 @@
-import { CartRequest, CartResponse } from '@/interface/cart.interface'
+import { CartRequest, CartResponse, CartUpdateRequest } from '@/interface/cart.interface'
 import http from '@/lib/http'
 
 class CartService {
@@ -11,6 +11,16 @@ class CartService {
 
     async create(cart: CartRequest) {
         const response = await http.post(`${this.basePath}`, cart)
+        return response
+    }
+
+    async update(idCartItem: number, cart: CartUpdateRequest) {
+        const response = await http.put(`${this.basePath}/${idCartItem}`, cart)
+        return response
+    }
+
+    async delete(idCartItem: number) {
+        const response = await http.delete(`${this.basePath}/${idCartItem}`)
         return response
     }
 }

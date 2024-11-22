@@ -6,10 +6,9 @@ import { Button } from '../ui/button'
 import Link from 'next/link'
 import { PlusIcon, MinusIcon, ShoppingCart } from 'lucide-react'
 import { useToast } from '../ui/use-toast'
-import { ToastAction } from '../ui/toast'
-import cartService from '@/service/cart.service'
 import { Input } from '@/components/ui/input'
 import { CustomerFullResponse } from '@/interface/auth.interface'
+import { useCartStore } from '@/store/useCartStore'
 
 export default function ProductDetailCard({ product }: { product: ProductDetail }) {
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
@@ -17,6 +16,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
     const [quantity, setQuantity] = useState(1)
     const [customerInfo, setCustomerInfo] = useState<CustomerFullResponse | null>(null)
     const { toast } = useToast()
+    const { addToCart, setIsOpen } = useCartStore()
 
     useEffect(() => {
         const userDataString = localStorage.getItem('user')
@@ -33,7 +33,6 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
             })
             return
         }
-
         if (!selectedVariant) {
             toast({
                 title: 'Error',
@@ -42,25 +41,9 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
             })
             return
         }
-
         try {
-            const cartRequest = {
-                productId: selectedVariant.id,
-                quantity: quantity,
-                customerId: customerInfo.id
-            }
-
-            await cartService.create(cartRequest)
-
-            toast({
-                title: 'Item added to cart!',
-                action: (
-                    <Link href='/cart'>
-                        <ToastAction altText='View Cart'>View Cart</ToastAction>
-                    </Link>
-                ),
-                className: 'border border-green-600'
-            })
+            await addToCart(customerInfo.id, selectedVariant.id, quantity)
+            setIsOpen(true)
         } catch (error) {
             toast({
                 title: 'Error',
