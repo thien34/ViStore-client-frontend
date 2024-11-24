@@ -42,7 +42,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
             return
         }
         try {
-            await addToCart(customerInfo.id, selectedVariant.id, quantity)
+            await addToCart({ customerId: customerInfo.id, productId: selectedVariant.id, quantity })
             setIsOpen(true)
         } catch (error) {
             toast({

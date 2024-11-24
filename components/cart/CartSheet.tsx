@@ -9,15 +9,14 @@ import {
     SheetTrigger
 } from '@/components/ui/sheet'
 import { ShoppingCartIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
 import CartProductCard from './CartProductCard'
 import { useCartStore } from '@/store/useCartStore'
 import { useEffect } from 'react'
 import { CartResponse } from '@/interface/cart.interface'
+import Link from 'next/link'
 
 export default function CartSheet() {
-    const router = useRouter()
     const { items, isOpen, loading, setIsOpen, fetchCart, updateQuantity, deleteFromCart } = useCartStore()
 
     // Get customer ID
@@ -33,7 +32,11 @@ export default function CartSheet() {
 
     const handleRemoveFromCart = async (cart: CartResponse) => {
         if (customerId) {
-            await updateQuantity(customerId, cart.id, cart.quantity - 1)
+            if (cart.quantity === 1) {
+                await deleteFromCart(customerId, cart.id)
+            } else {
+                await updateQuantity(customerId, cart.id, cart.quantity - 1)
+            }
         }
     }
 
@@ -64,9 +67,7 @@ export default function CartSheet() {
                 <SheetHeader className='p-2'>
                     <SheetTitle>Cart</SheetTitle>
                 </SheetHeader>
-                <SheetDescription className='text-gray-500'>
-                    {loading ? 'Loading...' : items.length > 0 ? '' : 'Empty'}
-                </SheetDescription>
+                <SheetDescription className='text-gray-500'>{items.length > 0 ? '' : 'Empty'}</SheetDescription>
                 <div className='h-full overflow-y-auto'>
                     {items.map((product, index) => (
                         <CartProductCard
@@ -79,17 +80,16 @@ export default function CartSheet() {
                     ))}
                 </div>
                 <SheetFooter>
-                    <Button
-                        variant='default'
-                        onClick={() => {
-                            setIsOpen(false)
-                            router.push('/cart')
-                        }}
-                        className='w-full'
-                        disabled={items.length === 0}
-                    >
-                        Proceed to Checkout
-                    </Button>
+                    <Link href={'/cart'} className='w-full'>
+                        <Button
+                            variant='default'
+                            onClick={() => setIsOpen(false)}
+                            className='w-full'
+                            disabled={items.length === 0}
+                        >
+                            Cart Detail
+                        </Button>
+                    </Link>
                 </SheetFooter>
             </SheetContent>
         </Sheet>

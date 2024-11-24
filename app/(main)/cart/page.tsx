@@ -1,197 +1,85 @@
 'use client'
-
-export const runtime = 'edge'
-import CartOrderTable from '@/components/cart/CartOrderTable'
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { useToast } from '@/components/ui/use-toast'
+import { useEffect, useState } from 'react'
+import { Card, CardContent } from '@/components/ui/card'
+import CartItem from '@/components/cart/CartProductDetailCard'
+import VoucherSection from '@/components/cart/VoucherCart'
+import ShippingSection from '@/components/cart/ShippingCart'
+import CartSummary from '@/components/cart/CartSummary'
 import { useCartStore } from '@/store/useCartStore'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
 
-const formSchema = checkoutFormSchema
+const ShoppingCart = () => {
+    const { items, loading, fetchCart, updateQuantity, deleteFromCart } = useCartStore()
+    const [customerId, setCustomerId] = useState<number | null>(null)
 
-export default function CartPage() {
-    const router = useRouter()
-    const { toast } = useToast()
-    const { cart, totalItems, clearCart } = useCartStore()
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: '',
-            email: '',
-            phoneNumber: '',
-            addressLine: '',
-            city: '',
-            state: '',
-            zipcode: '',
-            country: 'India'
+    // Get customer ID
+
+    useEffect(() => {
+        const userDataString = localStorage.getItem('user')
+        const userData = userDataString ? JSON.parse(userDataString) : null
+        setCustomerId(userData?.customerInfo?.id)
+        if (customerId) {
+            fetchCart(customerId)
         }
-    })
+    }, [customerId, fetchCart])
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        try {
-            const cartProducts = cart.map(({ name, price, quantity }) => ({
-                name,
-                price,
-                quantity
-            }))
-            const response = await sendInvoiceAction({
-                ...values,
-                products: cartProducts
-            })
+    const [selectedItems, setSelectedItems] = useState<number[]>([])
 
-            if (response.error) {
-                toast({ variant: 'destructive', title: response.error })
-                return
-            }
+    const handleSelectItem = (itemId: number) => {
+        setSelectedItems((prev) => (prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]))
+    }
 
-            clearCart()
-            form.reset()
-            router.push(`/cart/success?${new URLSearchParams(response.data)}`)
-        } catch (error) {
-            console.error('Checkout error:', error)
-            toast({
-                variant: 'destructive',
-                title: 'An unexpected error occurred. Please try again.'
-            })
-        }
+    const handleSelectAll = (checked: boolean) => {
+        setSelectedItems(checked ? items.map((item) => item.id) : [])
+    }
+
+    const handleUpdateQuantity = async (itemId: number, newQuantity: number) => {
+        if (newQuantity < 1) return
+        if (customerId) await updateQuantity(customerId, itemId, newQuantity)
+    }
+
+    const handleRemoveItem = async (itemId: number) => {
+        if (customerId) await deleteFromCart(customerId, itemId)
+    }
+
+    const handleCheckout = () => {
+        console.log('Checking out with items:', selectedItems)
     }
 
     return (
-        <section className='grid gap-8 p-2 md:grid-cols-2'>
-            <CartOrderTable />
-            <div className='py-2'>
-                <h1 className='p-2 text-2xl font-bold'>Checkout</h1>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 p-2'>
-                        <FormField
-                            control={form.control}
-                            name='name'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter Name' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name='email'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter Email' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name='phoneNumber'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter Phone Number' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name='addressLine'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Address Line</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter Address' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name='zipcode'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Zipcode</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter Zipcode' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name='city'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>City</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter City' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name='state'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>State</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter State' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            disabled
-                            control={form.control}
-                            name='country'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Country</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='Enter Country' {...field} />
-                                    </FormControl>
-                                    <FormDescription>Only India is supported currently</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button
-                            type='submit'
-                            className='w-full rounded-md px-4 py-2 text-center text-background'
-                            disabled={form.formState.isSubmitting || totalItems == 0}
-                        >
-                            {form.formState.isSubmitting ? (
-                                <div className='flex flex-row items-center gap-2'>
-                                    <span>Loading</span>
-                                    <Loader2 className='animate-spin' />
-                                </div>
-                            ) : (
-                                'Send Invoice'
-                            )}
-                        </Button>
-                    </form>
-                </Form>
+        <div className='max-w-7xl mx-auto p-4 space-y-4'>
+            <h1 className='text-xl font-medium mb-6'>Cart</h1>
+
+            <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+                <div className='lg:col-span-2 space-y-4'>
+                    <Card>
+                        <CardContent className='p-4 space-y-4'>
+                            {items.map((item) => (
+                                <CartItem
+                                    key={item.id}
+                                    item={item}
+                                    isSelected={selectedItems.includes(item.id)}
+                                    onSelect={handleSelectItem}
+                                    onUpdateQuantity={handleUpdateQuantity}
+                                    onRemove={handleRemoveItem}
+                                />
+                            ))}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className='space-y-4'>
+                    <VoucherSection />
+                    <ShippingSection />
+                </div>
             </div>
-        </section>
+            <CartSummary
+                selectedItems={selectedItems}
+                items={items}
+                onCheckout={handleCheckout}
+                onSelectAll={handleSelectAll}
+            />
+        </div>
     )
 }
+
+export default ShoppingCart
