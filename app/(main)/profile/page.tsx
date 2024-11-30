@@ -8,15 +8,31 @@ import { PasswordChange } from '@/components/profile/PasswordChange'
 import { OrderHistory } from '@/components/profile/OrderHistory'
 import { CustomerFullResponse } from '@/interface/auth.interface'
 import { useRouter } from 'next/navigation'
+import customerService from '@/service/customer.service'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function ProfilePage() {
     const [customerInfo, setCustomerInfo] = useState<CustomerFullResponse | null>(null)
     const router = useRouter()
+    const { toast } = useToast()
     useEffect(() => {
         const userDataString = localStorage.getItem('user')
         const userData = userDataString ? JSON.parse(userDataString) : null
-        setCustomerInfo(userData?.customerInfo || null)
-        if (!userData) {
+        if (userData && userData.customerInfo) {
+            const customerId = userData.customerInfo.id
+            const fetchUpdatedUserData = async () => {
+                try {
+                    const updatedCustomer = await customerService.getById(customerId)
+                    setCustomerInfo(updatedCustomer.payload)
+                    userData.customerInfo = updatedCustomer.payload
+                    localStorage.setItem('user', JSON.stringify(userData))
+                } catch (error) {
+                    console.error('Failed to fetch updated user data:', error)
+                }
+            }
+
+            fetchUpdatedUserData()
+        } else {
             router.push('/login')
         }
     }, [router])
@@ -43,7 +59,7 @@ export default function ProfilePage() {
                             <CardDescription>Manage your personal information</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <PersonalInfoForm customer={customerInfo} />
+                            <PersonalInfoForm toast={toast} customer={customerInfo} setCustomerInfo={setCustomerInfo} />
                         </CardContent>
                     </Card>
                 </TabsContent>

@@ -7,6 +7,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { CustomerFullResponse } from '@/interface/auth.interface'
+import customerService from '@/service/customer.service'
+import { CustomerUpdateRequest } from '@/interface/customer.interface'
+import React from 'react'
+import { Toaster } from '../ui/toaster'
+// Update the ToastOptions type definition
+interface ToastOptions {
+    duration?: number
+    title: string
+    description: string
+    variant?: 'default' | 'destructive' | null
+}
 
 // Định nghĩa schema cho form validation
 const personalInfoSchema = z.object({
@@ -21,9 +32,11 @@ const personalInfoSchema = z.object({
 
 interface PersonalInfoFormProps {
     customer: CustomerFullResponse
+    setCustomerInfo: React.Dispatch<React.SetStateAction<CustomerFullResponse | null>>
+    toast: (options: ToastOptions) => void
 }
 
-export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
+export function PersonalInfoForm({ toast, customer, setCustomerInfo }: PersonalInfoFormProps) {
     const form = useForm<z.infer<typeof personalInfoSchema>>({
         resolver: zodResolver(personalInfoSchema),
         defaultValues: {
@@ -35,9 +48,32 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
         }
     })
 
-    function onSubmit(values: z.infer<typeof personalInfoSchema>) {
+    async function onSubmit(values: z.infer<typeof personalInfoSchema>) {
         // TODO: Implement update profile logic
-        console.log(values)
+        const customerId = customer.id
+        try {
+            const updateValues: CustomerUpdateRequest = {
+                ...values,
+                dateOfBirth: new Date(values.dateOfBirth)
+            }
+            await customerService.update(customerId, updateValues)
+            toast({
+                title: 'Update successful',
+                description: 'Customer information has been updated.',
+                variant: 'default'
+            })
+            const updatedCustomer = await customerService.getById(customerId)
+            setCustomerInfo(updatedCustomer.payload)
+            const userData = JSON.parse(localStorage.getItem('user') || '{}')
+            userData.customerInfo = updatedCustomer.payload
+            localStorage.setItem('user', JSON.stringify(userData))
+        } catch (error) {
+            toast({
+                title: 'Update failed',
+                description: 'Customer information update failed',
+                variant: 'destructive'
+            })
+        }
     }
 
     return (
