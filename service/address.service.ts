@@ -1,17 +1,22 @@
-import { AddressesResponse, AddressRequest } from '@/interface/address.interface'
+import {
+    AddressesResponse,
+    AddressFullResponse,
+    AddressRequest,
+    District,
+    Province,
+    Ward
+} from '@/interface/address.interface'
 import http from '@/lib/http'
 
 class AddressService {
     private basePath = '/api/admin/addresses'
 
     async getAll(customerId: number) {
-        const response = await http.get<AddressesResponse[]>(`${this.basePath}?customerId=${customerId}`)
-        return response
+        return await http.get<AddressesResponse[]>(`${this.basePath}?customerId=${customerId}`)
     }
 
     async getById(id: number) {
-        const response = await http.get<AddressRequest>(`${this.basePath}/${id}`)
-        return response
+        return await http.get<AddressFullResponse>(`${this.basePath}/${id}`)
     }
 
     async create(address: AddressRequest) {
@@ -21,6 +26,21 @@ class AddressService {
 
     async update(id: number, address: Omit<AddressRequest, 'id'>) {
         const response = await http.put(`${this.basePath}/${id}`, address)
+        return response.payload
+    }
+
+    async getProvinces() {
+        const response = await http.get<Province[]>(`/api/admin/provinces`)
+        return response.payload
+    }
+
+    async getDistricts(provinceCode: string) {
+        const response = await http.get<District[]>(`/api/admin/districts/${provinceCode}`)
+        return response.payload
+    }
+
+    async getWards(districtCode: string) {
+        const response = await http.get<Ward[]>(`/api/admin/wards/${districtCode}`)
         return response.payload
     }
 

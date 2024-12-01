@@ -71,7 +71,7 @@ export default function ProfilePage() {
                             <CardDescription>Manage your shipping addresses</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <AddressManager customer={customerInfo} />
+                            <AddressManager toast={toast} customer={customerInfo} />
                         </CardContent>
                     </Card>
                 </TabsContent>

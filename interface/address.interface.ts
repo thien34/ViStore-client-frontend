@@ -2,18 +2,17 @@ export interface AddressesResponse {
     id?: number
     firstName: string
     lastName: string
-    email: string
-    company: string
+    company?: string
+    email?: string
     addressDetail: string
     phoneNumber: string
-    note?: string
 }
 
 export interface AddressRequest {
     id?: number
     firstName: string
     lastName: string
-    email: string
+    email?: string
     company?: string
     districtId: string
     provinceId: string
@@ -21,6 +20,19 @@ export interface AddressRequest {
     addressName: string
     phoneNumber: string
     customerId?: number
+}
+
+export interface AddressFullResponse {
+    id?: number
+    firstName: string
+    lastName: string
+    email?: string
+    company?: string
+    districtId: string
+    provinceId: string
+    wardId: string
+    addressName: string
+    phoneNumber: string
 }
 
 export interface Address {
