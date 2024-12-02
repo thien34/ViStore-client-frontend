@@ -21,27 +21,24 @@ export default function CartItem({ item, isSelected, onSelect, onUpdateQuantity,
                 <Checkbox checked={isSelected} onCheckedChange={() => onSelect(item.id)} className='mt-2' />
 
                 <div className='w-24 h-24 relative flex-shrink-0 rounded-lg overflow-hidden'>
-                    <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        sizes='(max-width: 96px) 100vw, 96px'
-                        className='object-cover'
-                        priority
-                    />
+                    <Link href={`/product/${item.slug}`}>
+                        <Image
+                            src={item.image}
+                            alt={item.name}
+                            fill
+                            sizes='(max-width: 96px) 100vw, 96px'
+                            className='object-cover'
+                            priority
+                        />
+                    </Link>
                 </div>
 
                 <div className='flex-1 space-y-2'>
                     <div className='flex items-start justify-between'>
                         <div className='space-y-1 flex-1'>
-                            <Link href={`/product/${item.slug}`}>
-                                <h3 className='font-medium line-clamp-2 hover:underline'>{item.name}</h3>
-                            </Link>
+                            <h3 className='font-medium line-clamp-2 '>{item.name}</h3>
                             <div className='flex items-center space-x-2 text-sm text-gray-500'>
-                                <span>
-                                    {/* Phân loại: {product.variant.color}, {product.variant.size} */}
-                                    Phân loại: Xanh, XL
-                                </span>
+                                <span>{item.attributeProduct}</span>
                             </div>
                         </div>
                         <Button

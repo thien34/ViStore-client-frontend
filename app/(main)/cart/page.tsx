@@ -6,10 +6,13 @@ import VoucherSection from '@/components/cart/VoucherCart'
 import ShippingSection from '@/components/cart/ShippingCart'
 import CartSummary from '@/components/cart/CartSummary'
 import { useCartStore } from '@/store/useCartStore'
+import { useRouter } from 'next/navigation'
 
 const ShoppingCart = () => {
-    const { items, loading, fetchCart, updateQuantity, deleteFromCart } = useCartStore()
+    const { items, loading, fetchCart, updateQuantity, deleteFromCart, setSelectedItems } = useCartStore()
+
     const [customerId, setCustomerId] = useState<number | null>(null)
+    const router = useRouter()
 
     // Get customer ID
 
@@ -22,14 +25,14 @@ const ShoppingCart = () => {
         }
     }, [customerId, fetchCart])
 
-    const [selectedItems, setSelectedItems] = useState<number[]>([])
+    const [selectedCartItems, setSelectedCartItems] = useState<number[]>([])
 
     const handleSelectItem = (itemId: number) => {
-        setSelectedItems((prev) => (prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]))
+        setSelectedCartItems((prev) => (prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]))
     }
 
     const handleSelectAll = (checked: boolean) => {
-        setSelectedItems(checked ? items.map((item) => item.id) : [])
+        setSelectedCartItems(checked ? items.map((item) => item.id) : [])
     }
 
     const handleUpdateQuantity = async (itemId: number, newQuantity: number) => {
@@ -42,7 +45,8 @@ const ShoppingCart = () => {
     }
 
     const handleCheckout = () => {
-        console.log('Checking out with items:', selectedItems)
+        setSelectedItems(selectedCartItems)
+        router.push('/checkout')
     }
 
     return (
@@ -57,7 +61,7 @@ const ShoppingCart = () => {
                                 <CartItem
                                     key={item.id}
                                     item={item}
-                                    isSelected={selectedItems.includes(item.id)}
+                                    isSelected={selectedCartItems.includes(item.id)}
                                     onSelect={handleSelectItem}
                                     onUpdateQuantity={handleUpdateQuantity}
                                     onRemove={handleRemoveItem}
@@ -73,7 +77,7 @@ const ShoppingCart = () => {
                 </div>
             </div>
             <CartSummary
-                selectedItems={selectedItems}
+                selectedItems={selectedCartItems}
                 items={items}
                 onCheckout={handleCheckout}
                 onSelectAll={handleSelectAll}

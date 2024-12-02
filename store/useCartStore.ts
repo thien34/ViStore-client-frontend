@@ -15,6 +15,8 @@ interface CartState {
     updateQuantity: (customerId: number, cartId: number, quantity: number) => Promise<void>
     deleteFromCart: (customerId: number, cartId: number) => Promise<void>
     clearCart: () => void
+    selectedItems: number[]
+    setSelectedItems: (items: number[]) => void
 }
 
 export const useCartStore = create<CartState>()(
@@ -83,7 +85,10 @@ export const useCartStore = create<CartState>()(
                 }
             },
 
-            clearCart: () => set({ items: [] })
+            clearCart: () => set({ items: [] }),
+
+            selectedItems: [],
+            setSelectedItems: (items) => set({ selectedItems: items })
         }),
         {
             name: 'cart-storage',

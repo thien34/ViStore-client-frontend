@@ -1,11 +1,11 @@
-import { AddressesResponse, AddressRequest } from '@/interface/address.interface'
+import { AddressesResponse, AddressPagingResponse, AddressRequest } from '@/interface/address.interface'
 import http from '@/lib/http'
 
 class AddressService {
     private basePath = '/api/admin/addresses'
 
     async getAll(customerId: number) {
-        const response = await http.get<AddressesResponse[]>(`${this.basePath}?customerId=${customerId}`)
+        const response = await http.get<AddressPagingResponse>(`${this.basePath}?customerId=${customerId}`)
         return response
     }
 

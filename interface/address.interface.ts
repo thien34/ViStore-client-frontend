@@ -1,3 +1,5 @@
+import { PagingResponse } from './paging.interface'
+
 export interface AddressesResponse {
     id?: number
     firstName: string
@@ -8,6 +10,8 @@ export interface AddressesResponse {
     phoneNumber: string
     note?: string
 }
+
+export type AddressPagingResponse = PagingResponse<AddressesResponse>
 
 export interface AddressRequest {
     id?: number

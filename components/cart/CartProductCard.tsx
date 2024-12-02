@@ -21,8 +21,8 @@ export default function CartProductCard({
                 <Link className='min-w-fit' href={`/product/${product.slug}`}>
                     <Image
                         src={product.image}
-                        width={100}
-                        height={100}
+                        width={110}
+                        height={110}
                         alt={product.name}
                         priority
                         className='rounded-lg'
@@ -31,7 +31,10 @@ export default function CartProductCard({
                 <div className='flex flex-col justify-between gap-2 pl-2 md:pl-4'>
                     <div className='w-full'>
                         <div className='line-clamp-2 text-sm font-medium leading-tight'>{product.name}</div>
-                        <div className='mt-1 text-sm text-primary opacity-95'>₹{product.unitPrice}</div>
+                        <div className='mt-1 text-sm text-primary opacity-95'>${product.unitPrice}</div>
+                        <div className='text-xs text-gray-500 bg-gray-100 inline-block p-1 m-1 rounded'>
+                            {product.attributeProduct}
+                        </div>
                     </div>
                     <div className='flex flex-row items-center justify-end gap-1'>
                         <div className='flex w-min flex-row gap-1 rounded-lg border p-1'>

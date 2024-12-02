@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CartResponse } from '@/interface/cart.interface'
-import Link from 'next/link'
 
 interface CartSummaryProps {
     selectedItems: number[]
@@ -35,16 +34,14 @@ export default function CartSummary({ selectedItems, items, onCheckout, onSelect
                     </div>
                 </div>
 
-                <Link href={'/checkout'}>
-                    <Button
-                        className='w-full md:w-auto px-8 '
-                        size='lg'
-                        onClick={onCheckout}
-                        disabled={selectedItems.length === 0}
-                    >
-                        Checkout
-                    </Button>
-                </Link>
+                <Button
+                    className='w-full md:w-auto px-8 '
+                    size='lg'
+                    onClick={onCheckout}
+                    disabled={selectedItems.length === 0}
+                >
+                    Checkout
+                </Button>
             </div>
         </div>
     )
