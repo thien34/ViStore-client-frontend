@@ -19,6 +19,9 @@ import { Input } from '@/components/ui/input'
 import addressService from '@/service/address.service'
 import { AddressesResponse, AddressRequest } from '@/interface/address.interface'
 import { useCartStore } from '@/store/useCartStore'
+import { OrderRequest, PaymentMethodType, PaymentModeType, PaymentStatusType } from '@/interface/order.interface'
+import { CustomerFullResponse } from '@/interface/auth.interface'
+import OrderService from '@/service/order.service'
 
 const formSchema = z.object({
     addressId: z.string().min(1, 'Vui lòng chọn địa chỉ giao hàng'),
@@ -42,8 +45,7 @@ const CheckoutPage = () => {
     })
     const [shippingInfo, setShippingInfo] = useState<ShippingCalculation | null>(null)
     const [loading, setLoading] = useState(false)
-    const [showSuccess, setShowSuccess] = useState(false)
-    // const [customerId, setCustomerId] = useState<number>(0)
+    const [customer, setCustomer] = useState<CustomerFullResponse>()
     const [addressDetail, setAddressDetail] = useState<AddressRequest>()
     const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({
@@ -60,6 +62,7 @@ const CheckoutPage = () => {
         const userDataString = localStorage.getItem('user')
         const userData = userDataString ? JSON.parse(userDataString) : null
         const customerId = userData?.customerInfo?.id
+        setCustomer(userData?.customerInfo)
 
         const fetchAddresses = async () => {
             try {
@@ -103,24 +106,24 @@ const CheckoutPage = () => {
 
                 // Chuẩn bị dữ liệu cho GHN API
                 const shippingRequest = {
-                    service_type_id: 5, // Loại dịch vụ GHN
-                    from_district_id: 1442, // Quận/huyện shop
-                    from_ward_code: '21211', // Mã phường/xã shop
-                    to_district_id: Number(addressDetail?.districtId), // Quận/huyện người nhận
-                    to_ward_code: addressDetail?.wardId, // Mã phường/xã người nhận
-                    height: 20,
-                    length: 30,
+                    service_type_id: 5,
+                    from_district_id: 3440,
+                    from_ward_code: '13010',
+                    to_district_id: Number(addressDetail?.districtId),
+                    to_ward_code: addressDetail?.wardId,
+                    height: 10,
+                    length: 15,
                     weight: cartItems1.reduce((total, item) => total + 500 * item.quantity, 0), // Giả sử mỗi sản phẩm 500g
-                    width: 40,
+                    width: 20,
                     insurance_value: subtotal, // Giá trị bảo hiểm = giá trị đơn hàng
                     coupon: null,
                     items: cartItems1.map((item) => ({
                         name: item.name,
                         quantity: item.quantity,
-                        height: 20,
-                        weight: 500, // 500g mỗi sản phẩm
-                        length: 30,
-                        width: 20
+                        height: 10,
+                        weight: 50, // 50g mỗi sản phẩm
+                        length: 15,
+                        width: 10
                     }))
                 }
 
@@ -155,13 +158,58 @@ const CheckoutPage = () => {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setLoading(true)
         try {
-            // Xử lý đặt hàng
             console.log('Order data:', { ...data, items: cartItems1, summary: orderSummary })
-
-            setShowSuccess(true)
-            // setTimeout(() => {
-            //     router.push('/order-success')
-            // }, 2000)
+            const order: OrderRequest = {
+                customerId: customer?.id || 0,
+                orderGuid: '',
+                addressType: 2,
+                orderId: '',
+                pickupInStore: false,
+                orderStatusId: 1,
+                paymentStatusId: PaymentStatusType.Paid,
+                paymentMethodId: PaymentMethodType.Cod,
+                paymentMode: PaymentModeType.Online,
+                orderSubtotal: orderSummary.subtotal,
+                orderSubtotalDiscount: orderSummary.discounts.promotions + orderSummary.discounts.vouchers,
+                orderShipping: orderSummary.shippingFee,
+                orderDiscount: orderSummary.discounts.promotions + orderSummary.discounts.vouchers,
+                orderTotal: orderSummary.total,
+                refundedAmount: 0,
+                paidDateUtc: '',
+                billCode: '',
+                deliveryMode: 1,
+                orderItems: cartItems1.map((item) => ({
+                    productId: item.idProduct,
+                    orderItemGuid: '',
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    priceTotal: item.quantity * item.unitPrice,
+                    discountAmount: item.discountPrice,
+                    originalProductCost: item.unitPrice,
+                    attributeDescription: ''
+                })),
+                addressRequest: {
+                    customerId: customer?.id || 0,
+                    firstName: addressDetail?.firstName || '',
+                    lastName: addressDetail?.lastName || '',
+                    email: addressDetail?.email || '',
+                    addressName: addressDetail?.addressName || '',
+                    provinceId: addressDetail?.provinceId || '',
+                    districtId: addressDetail?.districtId || '',
+                    wardId: addressDetail?.wardId || '',
+                    phoneNumber: addressDetail?.phoneNumber || ''
+                },
+                idVouchers: []
+            }
+            OrderService.createOrder(order).then(async (res) => {
+                if (res.status === 200) {
+                    toast({
+                        title: 'Payment success',
+                        description: 'Your order has been placed successfully',
+                        variant: 'default'
+                    })
+                }
+            })
         } catch (error) {
             toast({
                 title: 'Lỗi',
@@ -375,12 +423,6 @@ const CheckoutPage = () => {
                     </Card>
                 </div>
             </div>
-
-            {showSuccess && (
-                <Alert className='mt-4'>
-                    <AlertDescription>Đặt hàng thành công! Đang chuyển hướng...</AlertDescription>
-                </Alert>
-            )}
         </div>
     )
 }

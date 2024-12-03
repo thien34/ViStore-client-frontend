@@ -1,4 +1,11 @@
-import { AddressesResponse, AddressPagingResponse, AddressRequest } from '@/interface/address.interface'
+import {
+    AddressesResponse,
+    AddressPagingResponse,
+    AddressRequest,
+    District,
+    Province,
+    Ward
+} from '@/interface/address.interface'
 import http from '@/lib/http'
 
 class AddressService {
@@ -26,6 +33,21 @@ class AddressService {
 
     async delete(id: number): Promise<void> {
         await http.delete<void>(`${this.basePath}/${id}`)
+    }
+
+    async syncProvinces(data: Province[]) {
+        const response = await http.post('/api/admin/provinces/sync', data)
+        return response
+    }
+
+    async syncDistricts(data: District[]) {
+        const response = await http.post('/api/admin/districts/sync', data)
+        return response
+    }
+
+    async syncWards(data: Ward[]) {
+        const response = await http.post('/api/admin/wards/sync', data)
+        return response
     }
 }
 

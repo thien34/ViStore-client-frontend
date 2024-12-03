@@ -6,77 +6,180 @@ import { PlusCircle, Pencil, Trash2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Textarea } from '@/components/ui/textarea'
 import { CustomerFullResponse } from '@/interface/auth.interface'
 import addressService from '@/service/address.service'
-import { AddressesResponse } from '@/interface/address.interface'
+import { AddressesResponse, AddressRequest, District, Province, Ward } from '@/interface/address.interface'
+import { useToast } from '../ui/use-toast'
+import { getDistricts, getProvinces, getWards } from '@/service/shipping.service'
 
 const addressSchema = z.object({
-    fullName: z.string().min(2, 'Tên phải có ít nhất 2 ký tự'),
-    phone: z.string().min(10, 'Số điện thoại không hợp lệ'),
-    address: z.string().min(5, 'Địa chỉ phải có ít nhất 5 ký tự'),
-    province: z.string().min(1, 'Vui lòng chọn tỉnh/thành'),
-    district: z.string().min(1, 'Vui lòng chọn quận/huyện'),
-    ward: z.string().min(1, 'Vui lòng chọn phường/xã'),
-    isDefault: z.boolean().default(false)
+    firstName: z.string().min(2, 'Tên phải có ít nhất 2 ký tự'),
+    lastName: z.string().min(2, 'Họ phải có ít nhất 2 ký tự'),
+    phoneNumber: z.string().min(10, 'Số điện thoại không hợp lệ'),
+    addressName: z.string().min(5, 'Địa chỉ phải có ít nhất 5 ký tự'),
+    provinceId: z.string().min(1, 'Vui lòng chọn tỉnh/thành'),
+    districtId: z.string().min(1, 'Vui lòng chọn quận/huyện'),
+    wardId: z.string().min(1, 'Vui lòng chọn phường/xã'),
+    email: z.string().email('Email không hợp lệ').optional(),
+    company: z.string().optional()
 })
 
-interface PersonalInfoFormProps {
+interface AddressManagerProps {
     customer: CustomerFullResponse
 }
 
-type Address = {
-    id: number
-    fullName: string
-    phone: string
-    address: string
-    province: string
-    district: string
-    ward: string
-    isDefault: boolean
-}
-
-export function AddressManager({ customer }: PersonalInfoFormProps) {
+export function AddressManager({ customer }: AddressManagerProps) {
     const [addresses, setAddresses] = useState<AddressesResponse[]>([])
     const [isAddingNew, setIsAddingNew] = useState(false)
     const [editingAddress, setEditingAddress] = useState<AddressesResponse | null>(null)
 
-    useEffect(() => {
-        const loadAddresses = async () => {
-            const { payload: response } = await addressService.getAll(customer.id)
-            setAddresses(response.items)
-        }
-        loadAddresses()
-    }, [customer.id])
+    // Location states
+    const [provinces, setProvinces] = useState<Province[]>([])
+    const [districts, setDistricts] = useState<District[]>([])
+    const [wards, setWards] = useState<Ward[]>([])
+    const { toast } = useToast()
 
+    // Form setup
     const form = useForm<z.infer<typeof addressSchema>>({
         resolver: zodResolver(addressSchema),
         defaultValues: {
-            fullName: '',
-            phone: '',
-            address: '',
-            province: '',
-            district: '',
-            ward: '',
-            isDefault: false
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            addressName: '',
+            provinceId: '',
+            districtId: '',
+            wardId: '',
+            email: '',
+            company: ''
         }
     })
 
-    function onSubmit(values: z.infer<typeof addressSchema>) {
-        // TODO: Implement address save logic
-        console.log(values)
-        setIsAddingNew(false)
-        setEditingAddress(null)
+    // Load addresses on component mount
+    useEffect(() => {
+        const loadAddresses = async () => {
+            try {
+                const { payload: response } = await addressService.getAll(customer.id)
+                setAddresses(response.items)
+            } catch (error) {
+                console.log('Không thể tải danh sách địa chỉ')
+            }
+        }
+
+        // Load provinces
+        const loadProvinces = async () => {
+            try {
+                const provincesData = await getProvinces()
+                setProvinces(provincesData)
+            } catch (error) {
+                console.log('Không thể tải danh sách tỉnh/thành')
+            }
+        }
+
+        loadAddresses()
+        loadProvinces()
+    }, [customer.id])
+
+    // Handle province selection and load districts
+    const handleProvinceChange = async (provinceId: string) => {
+        try {
+            const districtsData = await getDistricts(Number(provinceId))
+            setDistricts(districtsData)
+            setWards([])
+            form.setValue('districtId', '')
+            form.setValue('wardId', '')
+        } catch (error) {
+            console.log('Không thể tải danh sách quận/huyện')
+        }
+    }
+
+    // Handle district selection and load wards
+    const handleDistrictChange = async (districtId: string) => {
+        try {
+            const wardsData = await getWards(Number(districtId))
+            setWards(wardsData)
+            form.setValue('wardId', '')
+        } catch (error) {
+            console.log('Không thể tải danh sách phường/xã')
+        }
+    }
+
+    // Prepare address for editing
+    const prepareEditAddress = (address: AddressesResponse) => {
+        setEditingAddress(address)
+        form.reset({
+            firstName: address.firstName,
+            lastName: address.lastName,
+            phoneNumber: address.phoneNumber,
+            addressName: address.addressDetail,
+            provinceId: '', // Will be set after loading districts
+            districtId: '', // Will be set after loading wards
+            wardId: '',
+            email: address.email,
+            company: address.company
+        })
+
+        // TODO: Add logic to pre-select province, district, ward based on existing address
+    }
+
+    // Submit form for creating/updating address
+    async function onSubmit(values: z.infer<typeof addressSchema>) {
+        try {
+            const addressData: AddressRequest = {
+                ...values,
+                email: values.email || '',
+                customerId: customer.id,
+                id: editingAddress?.id
+            }
+
+            if (editingAddress) {
+                await addressService.update(editingAddress?.id ?? 0, addressData)
+            } else {
+                await addressService.create(addressData)
+            }
+
+            // Refresh addresses
+            const { payload: response } = await addressService.getAll(customer.id)
+            setAddresses(response.items)
+
+            // Reset form and close dialog
+            form.reset()
+            setIsAddingNew(false)
+            setEditingAddress(null)
+        } catch (error: any) {
+            console.log(error.message || 'Không thể lưu địa chỉ')
+        }
+    }
+
+    // Delete address
+    const handleDeleteAddress = async (addressId: number) => {
+        try {
+            await addressService.delete(addressId)
+            console.log('Địa chỉ đã được xóa')
+
+            // Refresh addresses
+            const { payload: response } = await addressService.getAll(customer.id)
+            setAddresses(response.items)
+        } catch (error: any) {
+            console.log(error.message || 'Không thể xóa địa chỉ')
+        }
     }
 
     return (
         <div className='space-y-4'>
-            <Button onClick={() => setIsAddingNew(true)} className='mb-4'>
+            <Button
+                onClick={() => {
+                    setIsAddingNew(true)
+                    form.reset()
+                }}
+                className='mb-4'
+            >
                 <PlusCircle className='mr-2 h-4 w-4' />
-                New address
+                Add new address
             </Button>
 
             <div className='grid gap-4'>
@@ -92,16 +195,14 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
                                     <div className='text-sm mt-1'>{address.addressDetail}</div>
                                 </div>
                                 <div className='flex space-x-2'>
-                                    <Button variant='outline' size='icon' onClick={() => setEditingAddress(address)}>
+                                    <Button variant='outline' size='icon' onClick={() => prepareEditAddress(address)}>
                                         <Pencil className='h-4 w-4' />
                                     </Button>
                                     <Button
                                         variant='outline'
                                         size='icon'
                                         className='text-red-600'
-                                        onClick={() => {
-                                            // TODO: Implement delete logic
-                                        }}
+                                        onClick={() => address.id && handleDeleteAddress(address.id)}
                                     >
                                         <Trash2 className='h-4 w-4' />
                                     </Button>
@@ -117,31 +218,47 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
                 onOpenChange={() => {
                     setIsAddingNew(false)
                     setEditingAddress(null)
+                    form.reset()
                 }}
             >
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{isAddingNew ? 'Add new address' : 'Update address'}</DialogTitle>
+                        <DialogTitle>{isAddingNew ? 'Thêm địa chỉ mới' : 'Cập nhật địa chỉ'}</DialogTitle>
                     </DialogHeader>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-                            <FormField
-                                control={form.control}
-                                name='fullName'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Họ tên</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className='grid grid-cols-2 gap-4'>
+                                <FormField
+                                    control={form.control}
+                                    name='firstName'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Tên</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name='lastName'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Họ</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
 
                             <FormField
                                 control={form.control}
-                                name='phone'
+                                name='phoneNumber'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Số điện thoại</FormLabel>
@@ -155,12 +272,12 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
 
                             <FormField
                                 control={form.control}
-                                name='address'
+                                name='addressName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Địa chỉ</FormLabel>
+                                        <FormLabel>Địa chỉ chi tiết</FormLabel>
                                         <FormControl>
-                                            <Textarea {...field} />
+                                            <Input {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -170,13 +287,33 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
                             <div className='grid grid-cols-3 gap-4'>
                                 <FormField
                                     control={form.control}
-                                    name='province'
+                                    name='provinceId'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Tỉnh/Thành</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    field.onChange(value)
+                                                    handleProvinceChange(value)
+                                                }}
+                                                value={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder='Chọn tỉnh/thành' />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {provinces.map((province) => (
+                                                        <SelectItem
+                                                            key={province.ProvinceID}
+                                                            value={province.ProvinceID.toString()}
+                                                        >
+                                                            {province.ProvinceName}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -184,10 +321,76 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
 
                                 <FormField
                                     control={form.control}
-                                    name='district'
+                                    name='districtId'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Quận/Huyện</FormLabel>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    field.onChange(value)
+                                                    handleDistrictChange(value)
+                                                }}
+                                                value={field.value}
+                                                disabled={!form.getValues('provinceId')}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder='Chọn quận/huyện' />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {districts.map((district) => (
+                                                        <SelectItem
+                                                            key={district.DistrictID}
+                                                            value={district.DistrictID.toString()}
+                                                        >
+                                                            {district.DistrictName}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name='wardId'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Phường/Xã</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                value={field.value}
+                                                disabled={!form.getValues('districtId')}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder='Chọn phường/xã' />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {wards.map((ward) => (
+                                                        <SelectItem key={ward.WardCode} value={ward.WardCode}>
+                                                            {ward.WardName}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className='grid grid-cols-2 gap-4'>
+                                <FormField
+                                    control={form.control}
+                                    name='email'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email (Tùy chọn)</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>
@@ -198,10 +401,10 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
 
                                 <FormField
                                     control={form.control}
-                                    name='ward'
+                                    name='company'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Phường/Xã</FormLabel>
+                                            <FormLabel>Công ty (Tùy chọn)</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>
@@ -211,7 +414,9 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
                                 />
                             </div>
 
-                            <Button type='submit'>{isAddingNew ? 'Thêm địa chỉ' : 'Cập nhật'}</Button>
+                            <Button type='submit' className='w-full'>
+                                {isAddingNew ? 'Thêm địa chỉ' : 'Cập nhật địa chỉ'}
+                            </Button>
                         </form>
                     </Form>
                 </DialogContent>

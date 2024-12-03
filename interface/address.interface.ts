@@ -37,18 +37,18 @@ export interface Address {
 }
 
 export interface Province {
-    code: string
-    fullName: string
+    ProvinceID: number
+    ProvinceName: number
 }
 
 export interface District {
-    code: string
-    fullName: string
-    provinceCode: string
+    DistrictID: number
+    DistrictName: string
+    ProvinceID: number
 }
 
 export interface Ward {
-    code: string
-    fullName: string
-    districtCode: string
+    WardCode: string
+    WardName: string
+    DistrictID: string
 }
