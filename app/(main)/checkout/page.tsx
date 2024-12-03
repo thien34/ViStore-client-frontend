@@ -22,6 +22,8 @@ import { useCartStore } from '@/store/useCartStore'
 import { OrderRequest, PaymentMethodType, PaymentModeType, PaymentStatusType } from '@/interface/order.interface'
 import { CustomerFullResponse } from '@/interface/auth.interface'
 import OrderService from '@/service/order.service'
+import { v4 as uuidv4 } from 'uuid'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
     addressId: z.string().min(1, 'Vui lòng chọn địa chỉ giao hàng'),
@@ -31,7 +33,8 @@ const formSchema = z.object({
 })
 
 const CheckoutPage = () => {
-    const { selectedItems, items } = useCartStore()
+    const router = useRouter()
+    const { selectedItems, items, deleteFromCart } = useCartStore()
     const cartItems1 = useMemo(() => items.filter((item) => selectedItems.includes(item.id)), [items, selectedItems])
     const [addressList, setAddressList] = useState<AddressesResponse[]>([])
     const [orderSummary, setOrderSummary] = useState<OrderSummary>({
@@ -143,7 +146,7 @@ const CheckoutPage = () => {
                         vouchers: voucherDiscount
                     },
                     total: Number(
-                        (subtotal + shippingCalc.total / 23000 - promotionDiscount - voucherDiscount).toFixed(2)
+                        (subtotal + shippingCalc.total / 25000 - promotionDiscount - voucherDiscount).toFixed(2)
                     )
                 })
             } catch (error: any) {
@@ -161,7 +164,7 @@ const CheckoutPage = () => {
             console.log('Order data:', { ...data, items: cartItems1, summary: orderSummary })
             const order: OrderRequest = {
                 customerId: customer?.id || 0,
-                orderGuid: '',
+                orderGuid: uuidv4(),
                 addressType: 2,
                 orderId: '',
                 pickupInStore: false,
@@ -208,14 +211,14 @@ const CheckoutPage = () => {
                         description: 'Your order has been placed successfully',
                         variant: 'default'
                     })
+                    cartItems1.forEach(async (item) => {
+                        deleteFromCart(customer?.id ?? -1, item.id)
+                    })
+                    router.push('/checkout/success')
                 }
             })
         } catch (error) {
-            toast({
-                title: 'Lỗi',
-                description: 'Đã có lỗi xảy ra. Vui lòng thử lại',
-                variant: 'destructive'
-            })
+            console.log('Error creating order:', error)
         } finally {
             setLoading(false)
         }
