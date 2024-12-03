@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { PlusCircle, Pencil, Trash2 } from 'lucide-react'
@@ -12,6 +12,7 @@ import * as z from 'zod'
 import { Textarea } from '@/components/ui/textarea'
 import { CustomerFullResponse } from '@/interface/auth.interface'
 import addressService from '@/service/address.service'
+import { AddressesResponse } from '@/interface/address.interface'
 
 const addressSchema = z.object({
     fullName: z.string().min(2, 'Tên phải có ít nhất 2 ký tự'),
@@ -39,25 +40,17 @@ type Address = {
 }
 
 export function AddressManager({ customer }: PersonalInfoFormProps) {
-    const [addresses, setAddresses] = useState<Address[]>([
-        {
-            id: 1,
-            fullName: 'Nguyễn Văn A',
-            phone: '0123456789',
-            address: '123 Đường ABC',
-            province: 'Hồ Chí Minh',
-            district: 'Quận 1',
-            ward: 'Phường Bến Nghé',
-            isDefault: true
-        }
-    ])
+    const [addresses, setAddresses] = useState<AddressesResponse[]>([])
     const [isAddingNew, setIsAddingNew] = useState(false)
-    const [editingAddress, setEditingAddress] = useState<Address | null>(null)
+    const [editingAddress, setEditingAddress] = useState<AddressesResponse | null>(null)
 
-    const loadAddresses = async () => {
-        const { payload: response } = await addressService.getAll(customer.id)
-        // setAddresses(response)
-    }
+    useEffect(() => {
+        const loadAddresses = async () => {
+            const { payload: response } = await addressService.getAll(customer.id)
+            setAddresses(response.items)
+        }
+        loadAddresses()
+    }, [customer.id])
 
     const form = useForm<z.infer<typeof addressSchema>>({
         resolver: zodResolver(addressSchema),
@@ -93,15 +86,10 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
                             <div className='flex justify-between items-start'>
                                 <div>
                                     <div className='font-medium'>
-                                        {address.fullName}{' '}
-                                        {address.isDefault && (
-                                            <span className='text-sm text-blue-600 ml-2'>[Mặc định]</span>
-                                        )}
+                                        {address.firstName} {address.lastName}
                                     </div>
-                                    <div className='text-sm text-gray-600'>{address.phone}</div>
-                                    <div className='text-sm mt-1'>
-                                        {address.address}, {address.ward}, {address.district}, {address.province}
-                                    </div>
+                                    <div className='text-sm text-gray-600'>{address.phoneNumber}</div>
+                                    <div className='text-sm mt-1'>{address.addressDetail}</div>
                                 </div>
                                 <div className='flex space-x-2'>
                                     <Button variant='outline' size='icon' onClick={() => setEditingAddress(address)}>
@@ -133,7 +121,7 @@ export function AddressManager({ customer }: PersonalInfoFormProps) {
             >
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{isAddingNew ? 'Thêm địa chỉ mới' : 'Chỉnh sửa địa chỉ'}</DialogTitle>
+                        <DialogTitle>{isAddingNew ? 'Add new address' : 'Update address'}</DialogTitle>
                     </DialogHeader>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>

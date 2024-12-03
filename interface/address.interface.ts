@@ -44,9 +44,11 @@ export interface Province {
 export interface District {
     code: string
     fullName: string
+    provinceCode: string
 }
 
 export interface Ward {
     code: string
     fullName: string
+    districtCode: string
 }

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -11,14 +11,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/components/ui/use-toast'
-import { CartItem, OrderSummary, ShippingCalculation } from '@/interface/checkout'
+import { OrderSummary, ShippingCalculation } from '@/interface/checkout'
 import { calculateShippingFee } from '@/service/shipping.service'
-import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import addressService from '@/service/address.service'
-import { AddressesResponse } from '@/interface/address.interface'
+import { AddressesResponse, AddressRequest } from '@/interface/address.interface'
 import { useCartStore } from '@/store/useCartStore'
 
 const formSchema = z.object({
@@ -30,7 +29,7 @@ const formSchema = z.object({
 
 const CheckoutPage = () => {
     const { selectedItems, items } = useCartStore()
-    const cartItems1 = items.filter((item) => selectedItems.includes(item.id))
+    const cartItems1 = useMemo(() => items.filter((item) => selectedItems.includes(item.id)), [items, selectedItems])
     const [addressList, setAddressList] = useState<AddressesResponse[]>([])
     const [orderSummary, setOrderSummary] = useState<OrderSummary>({
         subtotal: 0,
@@ -44,9 +43,8 @@ const CheckoutPage = () => {
     const [shippingInfo, setShippingInfo] = useState<ShippingCalculation | null>(null)
     const [loading, setLoading] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
-    const [customerId, setCustomerId] = useState<number>(0)
-
-    const router = useRouter()
+    // const [customerId, setCustomerId] = useState<number>(0)
+    const [addressDetail, setAddressDetail] = useState<AddressRequest>()
     const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -61,23 +59,44 @@ const CheckoutPage = () => {
     useEffect(() => {
         const userDataString = localStorage.getItem('user')
         const userData = userDataString ? JSON.parse(userDataString) : null
-        setCustomerId(userData?.customerInfo?.id)
+        const customerId = userData?.customerInfo?.id
+
         const fetchAddresses = async () => {
             try {
                 const response = await addressService.getAll(customerId)
-                setAddressList(response?.payload.items || [])
+                const addresses = response?.payload.items || []
+                setAddressList(addresses)
+
+                if (addresses.length > 0) {
+                    form.setValue('addressId', String(addresses[0].id))
+                }
             } catch (error) {
                 setAddressList([])
             }
         }
-        fetchAddresses()
-    }, [customerId])
+
+        if (customerId) {
+            fetchAddresses()
+        }
+    }, [addressList.length, form])
+
+    useEffect(() => {
+        const addressId = form.watch('addressId')
+        const fetchAddressDetail = async () => {
+            if (addressList.length > 0 && Number(addressId) != 0) {
+                const detailResponse = await addressService.getById(Number(addressId))
+                setAddressDetail(detailResponse.payload)
+            }
+        }
+        fetchAddressDetail()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [form, addressList.length, form.watch('addressId')])
 
     // Tính toán shipping fee và cập nhật order summary
     useEffect(() => {
         const calculateOrder = async () => {
             if (cartItems1.length === 0) return
-
+            if (!addressDetail) return
             try {
                 // Tính tổng tiền hàng
                 const subtotal = cartItems1.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
@@ -87,8 +106,8 @@ const CheckoutPage = () => {
                     service_type_id: 5, // Loại dịch vụ GHN
                     from_district_id: 1442, // Quận/huyện shop
                     from_ward_code: '21211', // Mã phường/xã shop
-                    to_district_id: 1820, // Quận/huyện người nhận
-                    to_ward_code: '030712', // Mã phường/xã người nhận
+                    to_district_id: Number(addressDetail?.districtId), // Quận/huyện người nhận
+                    to_ward_code: addressDetail?.wardId, // Mã phường/xã người nhận
                     height: 20,
                     length: 30,
                     weight: cartItems1.reduce((total, item) => total + 500 * item.quantity, 0), // Giả sử mỗi sản phẩm 500g
@@ -115,7 +134,7 @@ const CheckoutPage = () => {
                 setShippingInfo(shippingCalc)
                 setOrderSummary({
                     subtotal,
-                    shippingFee: shippingCalc.total, // Sử dụng total từ response GHN
+                    shippingFee: Number((shippingCalc.total / 25000).toFixed(2)),
                     discounts: {
                         promotions: promotionDiscount,
                         vouchers: voucherDiscount
@@ -126,16 +145,12 @@ const CheckoutPage = () => {
                 })
             } catch (error: any) {
                 console.error('Error calculating order:', error)
-                toast({
-                    title: 'Lỗi tính phí vận chuyển',
-                    description: error.message || 'Không thể tính phí vận chuyển. Vui lòng thử lại',
-                    variant: 'destructive'
-                })
+                return
             }
         }
 
         calculateOrder()
-    }, [toast, form, cartItems1])
+    }, [form, cartItems1, addressDetail])
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setLoading(true)
@@ -144,9 +159,9 @@ const CheckoutPage = () => {
             console.log('Order data:', { ...data, items: cartItems1, summary: orderSummary })
 
             setShowSuccess(true)
-            setTimeout(() => {
-                router.push('/order-success')
-            }, 2000)
+            // setTimeout(() => {
+            //     router.push('/order-success')
+            // }, 2000)
         } catch (error) {
             toast({
                 title: 'Lỗi',
@@ -323,7 +338,7 @@ const CheckoutPage = () => {
                                 {shippingInfo && (
                                     <div className='flex justify-between'>
                                         <span>Shipping Fee ({shippingInfo.service_name}):</span>
-                                        <span>${(orderSummary.shippingFee / 23000).toFixed(2)}</span>
+                                        <span>${orderSummary.shippingFee}</span>
                                     </div>
                                 )}
 
