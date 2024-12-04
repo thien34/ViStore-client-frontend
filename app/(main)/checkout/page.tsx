@@ -150,7 +150,7 @@ const CheckoutPage = () => {
                     )
                 })
             } catch (error: any) {
-                console.error('Error calculating order:', error)
+                console.error('Lỗi tính toán đơn hàng:', error)
                 return
             }
         }
@@ -161,7 +161,7 @@ const CheckoutPage = () => {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setLoading(true)
         try {
-            console.log('Order data:', { ...data, items: cartItems1, summary: orderSummary })
+            console.log('Dữ liệu đơn hàng:', { ...data, items: cartItems1, summary: orderSummary })
             const order: OrderRequest = {
                 customerId: customer?.id || 0,
                 orderGuid: uuidv4(),
@@ -207,8 +207,8 @@ const CheckoutPage = () => {
             OrderService.createOrder(order).then(async (res) => {
                 if (res.status === 200) {
                     toast({
-                        title: 'Payment success',
-                        description: 'Your order has been placed successfully',
+                        title: 'Thanh toán thành công',
+                        description: 'Đơn hàng của bạn đã được đặt thành công',
                         variant: 'default'
                     })
                     cartItems1.forEach(async (item) => {
@@ -218,7 +218,7 @@ const CheckoutPage = () => {
                 }
             })
         } catch (error) {
-            console.log('Error creating order:', error)
+            console.log('Lỗi tạo lệnh:', error)
         } finally {
             setLoading(false)
         }
@@ -231,8 +231,8 @@ const CheckoutPage = () => {
                 <div className='lg:col-span-7'>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Payment Information</CardTitle>
-                            <CardDescription>Please complete the order information</CardDescription>
+                            <CardTitle>Thông tin thanh toán</CardTitle>
+                            <CardDescription>Vui lòng điền đầy đủ thông tin đặt hàng</CardDescription>
                         </CardHeader>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -243,10 +243,10 @@ const CheckoutPage = () => {
                                         name='addressId'
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Shipping Address</FormLabel>
+                                                <FormLabel>Địa chỉ giao hàng</FormLabel>
                                                 <Select onValueChange={field.onChange} value={field.value}>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder='Select shipping address' />
+                                                        <SelectValue placeholder='Chọn địa chỉ giao hàng' />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {addressList.map((address) => (
@@ -270,10 +270,10 @@ const CheckoutPage = () => {
                                         name='note'
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Note for the shop</FormLabel>
+                                                <FormLabel>Lưu ý cho cửa hàng</FormLabel>
                                                 <FormControl>
                                                     <Textarea
-                                                        placeholder='Enter note for order (optional)'
+                                                        placeholder='Nhập ghi chú cho đơn hàng (tùy chọn)'
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -288,13 +288,13 @@ const CheckoutPage = () => {
                                         name='voucher'
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Voucher Code</FormLabel>
+                                                <FormLabel>Mã giảm giá</FormLabel>
                                                 <div className='flex gap-2'>
                                                     <FormControl>
-                                                        <Input placeholder='Enter discount code' {...field} />
+                                                        <Input placeholder='Nhập mã giảm giá' {...field} />
                                                     </FormControl>
                                                     <Button type='button' variant='outline'>
-                                                        Apply
+                                                        Áp dụng
                                                     </Button>
                                                 </div>
                                                 <FormMessage />
@@ -314,8 +314,8 @@ const CheckoutPage = () => {
                                                         <SelectValue placeholder='Chọn phương thức thanh toán' />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value='cod'>Cash on Delivery</SelectItem>
-                                                        <SelectItem value='stripe'>Pay with Stripe</SelectItem>
+                                                        <SelectItem value='cod'>Thanh toán khi nhận hàng</SelectItem>
+                                                        <SelectItem value='stripe'>Thanh toán bằng Stripe</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -337,15 +337,15 @@ const CheckoutPage = () => {
                 <div className='lg:col-span-5'>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Your Order</CardTitle>
+                            <CardTitle>Đơn đặt hàng của bạn</CardTitle>
                         </CardHeader>
                         <CardContent className='space-y-4'>
                             {/* Danh sách sản phẩm */}
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Product</TableHead>
-                                        <TableHead className='text-right'>Total</TableHead>
+                                        <TableHead>Sản phẩm</TableHead>
+                                        <TableHead className='text-right'>Tổng tiền</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -382,27 +382,27 @@ const CheckoutPage = () => {
                             {/* Chi tiết thanh toán */}
                             <div className='space-y-2'>
                                 <div className='flex justify-between'>
-                                    <span>Subtotal:</span>
+                                    <span>Tổng phụ:</span>
                                     <span>${orderSummary.subtotal}</span>
                                 </div>
 
                                 {shippingInfo && (
                                     <div className='flex justify-between'>
-                                        <span>Shipping Fee ({shippingInfo.service_name}):</span>
+                                        <span>Phí vận chuyển({shippingInfo.service_name}):</span>
                                         <span>${orderSummary.shippingFee}</span>
                                     </div>
                                 )}
 
                                 {orderSummary.discounts.promotions > 0 && (
                                     <div className='flex justify-between text-green-600'>
-                                        <span>Discount:</span>
+                                        <span>Giảm giá:</span>
                                         <span>-${orderSummary.discounts.promotions}</span>
                                     </div>
                                 )}
 
                                 {orderSummary.discounts.vouchers > 0 && (
                                     <div className='flex justify-between text-green-600'>
-                                        <span>Voucher:</span>
+                                        <span>Phiếu giảm giá:</span>
                                         <span>-${orderSummary.discounts.vouchers}</span>
                                     </div>
                                 )}
@@ -410,7 +410,7 @@ const CheckoutPage = () => {
                                 <Separator />
 
                                 <div className='flex justify-between font-medium text-lg'>
-                                    <span>Total:</span>
+                                    <span>Tổng tiền:</span>
                                     <span>${orderSummary.total}</span>
                                 </div>
                             </div>

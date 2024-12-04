@@ -63,7 +63,7 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
                         name='firstName'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>First name</FormLabel>
+                                <FormLabel>Tên</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -77,7 +77,7 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
                         name='lastName'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Last name</FormLabel>
+                                <FormLabel>Họ</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -93,7 +93,7 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
                         name='gender'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Gender</FormLabel>
+                                <FormLabel>Giới tính</FormLabel>
                                 <Select
                                     onValueChange={(value) => field.onChange(Number(value))}
                                     value={String(field.value)}
@@ -104,8 +104,8 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value='0'>Male</SelectItem>
-                                        <SelectItem value='1'>Female</SelectItem>
+                                        <SelectItem value='0'>Nam</SelectItem>
+                                        <SelectItem value='1'>Nữ</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -118,7 +118,7 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
                         name='dateOfBirth'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Date of Birth</FormLabel>
+                                <FormLabel>Ngày sinh</FormLabel>
                                 <FormControl>
                                     <Input type='date' {...field} />
                                 </FormControl>
@@ -128,7 +128,7 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
                     />
                 </div>
 
-                <Button type='submit'>Update</Button>
+                <Button type='submit'>Cập nhật</Button>
             </form>
         </Form>
     )

@@ -8,16 +8,16 @@ export default function ShippingSection() {
             <div className='flex items-center justify-between mb-2'>
                 <div className='flex items-center space-x-2'>
                     <Info className='w-4 h-4 text-green-500' />
-                    <span className='font-medium'>Shipping Information</span>
+                    <span className='font-medium'>Thông tin vận chuyển</span>
                 </div>
                 <Button variant='ghost' className='text-sm'>
-                    Change
+                    Thay đổi
                     <ChevronDown className='ml-1 w-4 h-4' />
                 </Button>
             </div>
             <Alert>
                 <AlertDescription className='text-sm text-gray-600'>
-                    Save ₫30,000 on shipping for orders over ₫250,000
+                    Tiết kiệm ₫30,000 khi vận chuyển cho các đơn hàng trên ₫250,000
                 </AlertDescription>
             </Alert>
         </div>

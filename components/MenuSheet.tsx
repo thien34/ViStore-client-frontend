@@ -22,7 +22,7 @@ export default async function MenuSheet({ categories }: { categories: Category[]
                     <SheetClose asChild>
                         <Link href='/'>
                             <Button className='text-lg' variant='ghost'>
-                                Home
+                                Trang chủ
                             </Button>
                         </Link>
                     </SheetClose>

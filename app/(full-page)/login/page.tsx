@@ -48,8 +48,8 @@ const LoginPage = () => {
             <div className='w-full max-w-md transform transition-all duration-500'>
                 <Card className='w-full border-0 shadow-lg'>
                     <CardHeader className='space-y-1 pb-8'>
-                        <CardTitle className='text-2xl text-center font-bold'>Welcome back</CardTitle>
-                        <CardDescription className='text-center'>Sign in to your account to continue</CardDescription>
+                        <CardTitle className='text-2xl text-center font-bold'>Chào mừng trở lại</CardTitle>
+                        <CardDescription className='text-center'>Đăng nhập vào tài khoản của bạn để tiếp tục</CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
                         {/* Google Sign In Button */}
@@ -78,7 +78,7 @@ const LoginPage = () => {
                                     />
                                 </svg>
                             </div>
-                            Continue with Google
+                            Tiếp tục với Google
                         </Button>
 
                         <div className='flex items-center space-x-2'>
@@ -90,7 +90,7 @@ const LoginPage = () => {
                         <form onSubmit={handleSubmit} className='space-y-4'>
                             <div className='space-y-2'>
                                 <Label htmlFor='email' className='text-sm font-medium'>
-                                    Email address
+                                    Địa chỉ email
                                 </Label>
                                 <div className='relative'>
                                     <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
@@ -109,13 +109,13 @@ const LoginPage = () => {
                             <div className='space-y-2'>
                                 <div className='flex justify-between items-center'>
                                     <Label htmlFor='password' className='text-sm font-medium'>
-                                        Password
+                                        Mật khẩu
                                     </Label>
                                     <Link
                                         href='/forgot-password'
                                         className='text-sm text-blue-500 hover:text-blue-600 transition-colors'
                                     >
-                                        Forgot password?
+                                        Quên mật khẩu?
                                     </Link>
                                 </div>
                                 <div className='relative'>
@@ -141,10 +141,10 @@ const LoginPage = () => {
                                 {isLoading ? (
                                     <>
                                         <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                                        Signing in...
+                                        Đăng nhập...
                                     </>
                                 ) : (
-                                    'Sign in'
+                                    'Đăng nhập'
                                 )}
                             </Button>
                         </form>
@@ -152,9 +152,9 @@ const LoginPage = () => {
 
                     <CardFooter className='flex justify-center pb-8'>
                         <span className='text-sm text-gray-500'>
-                            Don&apos;t have an account?{' '}
+                           Bạn chưa có tài khoản?{' '}
                             <Link href='/sign-up' className='text-blue-500 hover:text-blue-600 transition-colors'>
-                                Sign up
+                                Đăng ký
                             </Link>
                         </span>
                     </CardFooter>

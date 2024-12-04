@@ -63,7 +63,7 @@ export default function CartItem({ item, isSelected, onSelect, onUpdateQuantity,
                             )}
                         </div>
                         <div className='space-y-1'>
-                            <div className='text-xs text-right text-gray-500 '>Available: {item.quantityProduct}</div>
+                            <div className='text-xs text-right text-gray-500 '>Có sẵn: {item.quantityProduct}</div>
                             <div className='flex items-center space-x-2'>
                                 <Button
                                     variant='outline'

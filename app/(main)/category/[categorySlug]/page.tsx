@@ -22,7 +22,7 @@ export default async function CategoryPage({ params }: Props) {
                     </div>
                 </section>
             ) : (
-                <p className='p-4 text-2xl'>Sorry No Products found: {params.categorySlug}</p>
+                <p className='p-4 text-2xl'>Xin lỗi không tìm thấy sản phẩm: {params.categorySlug}</p>
             )}
         </section>
     )

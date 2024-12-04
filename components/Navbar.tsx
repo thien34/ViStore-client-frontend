@@ -17,7 +17,7 @@ export default function Navbar({ categories }: { categories: Category[] }) {
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <Link href='/' passHref legacyBehavior>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>Home</NavigationMenuLink>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>Trang chủ</NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
@@ -38,12 +38,12 @@ export default function Navbar({ categories }: { categories: Category[] }) {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                     <Link href='/about' passHref legacyBehavior>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>About Us</NavigationMenuLink>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>Về chúng tôi</NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                     <Link href='/contact' passHref legacyBehavior>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contact Us</NavigationMenuLink>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>Liên hệ với chúng tôi</NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>
             </NavigationMenuList>

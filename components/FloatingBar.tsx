@@ -26,7 +26,7 @@ export default function FloatingBar() {
             <div className='flex flex-row divide-x p-1'>
                 <Link href={`tel:${OWNER_PHONE_1}`} className='flex shrink-0 flex-row items-center space-x-1 p-2'>
                     <PhoneCallIcon size={20} />
-                    <span className='text-sm'>Call Us</span>
+                    <span className='text-sm'>Gọi cho chúng tôi</span>
                 </Link>
                 <Link
                     href={`https://wa.me/${OWNER_PHONE_1}`}
@@ -37,7 +37,7 @@ export default function FloatingBar() {
                 </Link>
                 <button onClick={() => handleShare()} className='flex shrink-0 flex-row items-center space-x-1 p-2'>
                     <Share size={20} />
-                    <span className='text-sm'>Share</span>
+                    <span className='text-sm'>Chia sẻ</span>
                 </button>
             </div>
             <span className='absolute inset-x-0 -bottom-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-primary to-transparent' />

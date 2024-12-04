@@ -60,14 +60,14 @@ export default function CartSheet() {
                     {items.length > 0 && (
                         <div className='absolute -right-1 -top-1 h-3 w-3 rounded-full bg-primary'></div>
                     )}
-                    <span className='sr-only'>Cart</span>
+                    <span className='sr-only'>Giỏ hàng</span>
                 </Button>
             </SheetTrigger>
             <SheetContent className='flex flex-col p-2'>
                 <SheetHeader className='p-2'>
-                    <SheetTitle>Cart</SheetTitle>
+                    <SheetTitle>Giỏ haàng</SheetTitle>
                 </SheetHeader>
-                <SheetDescription className='text-gray-500'>{items.length > 0 ? '' : 'Empty'}</SheetDescription>
+                <SheetDescription className='text-gray-500'>{items.length > 0 ? '' : 'Trống'}</SheetDescription>
                 <div className='h-full overflow-y-auto'>
                     {items.map((product, index) => (
                         <CartProductCard
@@ -87,7 +87,7 @@ export default function CartSheet() {
                             className='w-full'
                             disabled={items.length === 0}
                         >
-                            Cart Detail
+                            Chi tiết giỏ hàng
                         </Button>
                     </Link>
                 </SheetFooter>

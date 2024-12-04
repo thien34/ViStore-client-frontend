@@ -34,7 +34,7 @@ export default function ProductCard({ product }: { product: Product }) {
                     ) : (
                         <p className='font-medium text-primary'>&#36; {product.unitPrice}</p>
                     )}
-                    <div className='text-xs text-gray-500'>Sold: {product.sold}</div>
+                    <div className='text-xs text-gray-500'>Đã bán: {product.sold}</div>
                 </CardFooter>
             </Card>
         </Link>

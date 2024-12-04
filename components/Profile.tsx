@@ -64,13 +64,13 @@ export default function UserMenu() {
                 <DropdownMenuItem asChild>
                     <Link href='/profile' className='cursor-pointer focus:bg-accent'>
                         <User className='mr-2 h-4 w-4' />
-                        Profile
+                        Hồ sơ
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <Link href='/settings' className='cursor-pointer focus:bg-accent'>
                         <Settings className='mr-2 h-4 w-4' />
-                        Settings
+                        Cài đặt
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -79,7 +79,7 @@ export default function UserMenu() {
                     onClick={handleLogout}
                 >
                     <LogOut className='mr-2 h-4 w-4' />
-                    Log out
+                    Đăng xuất
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

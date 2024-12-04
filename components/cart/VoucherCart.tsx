@@ -25,7 +25,7 @@ export default function VoucherSection() {
                 <AccordionTrigger className='hover:no-underline'>
                     <div className='flex items-center space-x-2 text-orange-500'>
                         <Tag className='w-4 h-4' />
-                        <span>Discount Code</span>
+                        <span>Mã giảm giá</span>
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -37,14 +37,14 @@ export default function VoucherSection() {
                             >
                                 <div>
                                     <div className='font-medium'>
-                                        Discount ${voucher.discount.toLocaleString('vi-VN')}
+                                        Giảm giá ${voucher.discount.toLocaleString('vi-VN')}
                                     </div>
                                     <div className='text-sm text-gray-500'>
-                                        Minimum spend ₫{voucher.minSpend.toLocaleString('vi-VN')}
+                                        Chi tiêu tối thiểu ₫{voucher.minSpend.toLocaleString('vi-VN')}
                                     </div>
                                 </div>
                                 <Button variant='outline' size='sm'>
-                                    Apply
+                                    Áp dụng
                                 </Button>
                             </div>
                         ))}

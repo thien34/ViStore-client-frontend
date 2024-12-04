@@ -10,37 +10,37 @@ export default function Footer() {
             <section className='container mx-auto pt-10'>
                 <div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
                     <div>
-                        <h2 className='mb-3 text-lg font-bold'>Quick Links</h2>
+                        <h2 className='mb-3 text-lg font-bold'>Liên kết nhanh</h2>
                         <ul className='space-y-2'>
                             <li>
                                 <Link href='/about' className='text-sm hover:underline'>
-                                    About Us
+                                    Về chúng tôi
                                 </Link>
                             </li>
                             <li>
                                 <Link href='/contact' className='text-sm hover:underline'>
-                                    Contact Us
+                                    Liên hệ với chúng tôi
                                 </Link>
                             </li>
                             <li>
                                 <Link href='/terms-of-service' className='text-sm hover:underline'>
-                                    Terms of Service
+                                    Điều khoản dịch vụ
                                 </Link>
                             </li>
                             <li>
                                 <Link href='/privacy-policy' className='text-sm hover:underline'>
-                                    Privacy Policy
+                                    Chính sách bảo mật
                                 </Link>
                             </li>
                             <li>
                                 <Link href='/return-refund-policy' className='text-sm hover:underline'>
-                                    Return and Refund Policy
+                                    Chính sách đổi trả và hoàn tiền
                                 </Link>
                             </li>
                         </ul>
                     </div>
                     <div>
-                        <h2 className='mb-3 text-lg font-bold'>Contact Us</h2>
+                        <h2 className='mb-3 text-lg font-bold'>Liên hệ với chúng tôi</h2>
                         <div className='mb-3 flex gap-2 text-sm hover:underline'>
                             <MailIcon size={16} />
                             <Link href={`mailto:${OWNER_EMAIL}`}>{OWNER_EMAIL}</Link>

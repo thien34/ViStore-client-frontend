@@ -35,7 +35,7 @@ export const useCartStore = create<CartState>()(
                     const response = await cartService.getAll(customerId)
                     set({ items: response.payload })
                 } catch (error) {
-                    console.error('Failed to fetch cart:', error)
+                    console.error('Không tìm được giỏ hàng:', error)
                 } finally {
                     set({ loading: false })
                 }
@@ -49,7 +49,7 @@ export const useCartStore = create<CartState>()(
                     const response = await cartService.getAll(cartRequest.customerId)
                     set({ items: response.payload })
                 } catch (error) {
-                    console.error('Failed to add to cart:', error)
+                    console.error('Không thể thêm vào giỏ hàng:', error)
                     throw error
                 } finally {
                     set({ loading: false })
@@ -64,7 +64,7 @@ export const useCartStore = create<CartState>()(
                     const response = await cartService.getAll(customerId)
                     set({ items: response.payload })
                 } catch (error) {
-                    console.error('Failed to remove from cart:', error)
+                    console.error('Không thể xóa khỏi giỏ hàng:', error)
                     throw error
                 } finally {
                     set({ loading: false })
@@ -79,7 +79,7 @@ export const useCartStore = create<CartState>()(
                     set({ items: response.payload })
                 } catch (error: any) {
                     toast({
-                        title: 'Failed to update quantity'
+                        title: 'Không cập nhật được số lượng'
                     })
                 } finally {
                     set({ loading: false })
