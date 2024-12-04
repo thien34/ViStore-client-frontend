@@ -1,53 +1,56 @@
 export default function TermsOfService() {
     return (
         <div className='flex flex-col gap-2 px-2 py-4'>
-            <h2 className='p-4 text-3xl font-medium'>Terms Of Service</h2>
+            <h2 className='p-4 text-3xl font-medium'>Điều Khoản Dịch Vụ</h2>
             <section>
-                <h3 className='p-2 text-2xl'>1. Acceptance of Terms</h3>
+                <h3 className='p-2 text-2xl'>1. Chấp Nhận Điều Khoản</h3>
                 <p className='p-2'>
-                    By accessing and using oxabags.com, you agree to comply with and be bound by these Terms of Service.
+                    Bằng cách truy cập và sử dụng oxabags.com, bạn đồng ý tuân thủ và bị ràng buộc bởi các Điều Khoản
+                    Dịch Vụ này.
                 </p>
             </section>
 
             <section>
-                <h3 className='p-2 text-2xl'>2. Use of the Service</h3>
+                <h3 className='p-2 text-2xl'>2. Sử Dụng Dịch Vụ</h3>
                 <p className='p-2'>
-                    Our website and its content are intended solely for personal and non-commercial use. You may not use
-                    our website for any illegal or unauthorized purpose.
+                    Trang web và nội dung của chúng tôi chỉ dành cho mục đích cá nhân và phi thương mại. Bạn không được
+                    sử dụng trang web của chúng tôi cho bất kỳ mục đích bất hợp pháp hoặc không được phép nào.
                 </p>
             </section>
 
             <section>
-                <h3 className='p-2 text-2xl'>3. Intellectual Property Rights</h3>
+                <h3 className='p-2 text-2xl'>3. Quyền Sở Hữu Trí Tuệ</h3>
                 <p className='p-2'>
-                    All content, trademarks, logos, and intellectual property displayed on oxabags.com are the property
-                    of Aman Enterprise. You may not use, reproduce, or distribute any content from our website without
-                    prior written permission.
+                    Tất cả nội dung, thương hiệu, logo và tài sản trí tuệ được hiển thị trên oxabags.com là tài sản của
+                    Aman Enterprise. Bạn không được sử dụng, sao chép hoặc phân phối bất kỳ nội dung nào từ trang web
+                    của chúng tôi nếu không có sự cho phép bằng văn bản trước.
                 </p>
             </section>
 
             <section>
-                <h3 className='p-2 text-2xl'>4. Payment Processing</h3>
+                <h3 className='p-2 text-2xl'>4. Xử Lý Thanh Toán</h3>
                 <p className='p-2'>
-                    We utilize Razorpay, a third-party payment gateway, for processing payments on our website. By
-                    making a purchase through oxabags.com, you agree to abide by Razorpay&apos;s terms and conditions.
+                    Chúng tôi sử dụng Razorpay, một cổng thanh toán của bên thứ ba, để xử lý các khoản thanh toán trên
+                    trang web của mình. Bằng cách thực hiện mua hàng qua oxabags.com, bạn đồng ý tuân thủ các điều khoản
+                    và điều kiện của Razorpay.
                 </p>
                 <p className='p-2'>
-                    Aman Enterprise shall not be liable for any issues, disputes, or discrepancies arising from payment
-                    processing through Razorpay. Please refer to Razorpay&apos;s policies and procedures for more
-                    information.
+                    Aman Enterprise sẽ không chịu trách nhiệm về bất kỳ vấn đề, tranh chấp hoặc bất đồng nào phát sinh
+                    từ việc xử lý thanh toán qua Razorpay. Vui lòng tham khảo các chính sách và quy trình của Razorpay
+                    để biết thêm thông tin.
                 </p>
             </section>
 
             <section>
-                <h3 className='p-2 text-2xl'>5. Limitation of Liability</h3>
+                <h3 className='p-2 text-2xl'>5. Giới Hạn Trách Nhiệm</h3>
                 <p className='p-2'>
-                    We strive to provide accurate and up-to-date information on our website. However, we do not
-                    guarantee the accuracy, completeness, or reliability of any content.
+                    Chúng tôi cố gắng cung cấp thông tin chính xác và cập nhật trên trang web của mình. Tuy nhiên, chúng
+                    tôi không đảm bảo tính chính xác, đầy đủ hoặc độ tin cậy của bất kỳ nội dung nào.
                 </p>
                 <p className='p-2'>
-                    Aman Enterprise shall not be liable for any direct, indirect, incidental, special, or consequential
-                    damages arising out of or in any way connected with the use of our website or services.
+                    Aman Enterprise sẽ không chịu trách nhiệm cho bất kỳ thiệt hại trực tiếp, gián tiếp, ngẫu nhiên, đặc
+                    biệt hoặc hậu quả nào phát sinh từ hoặc liên quan đến việc sử dụng trang web hoặc dịch vụ của chúng
+                    tôi.
                 </p>
             </section>
         </div>

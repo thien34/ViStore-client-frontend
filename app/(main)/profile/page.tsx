@@ -22,25 +22,25 @@ export default function ProfilePage() {
     }, [router])
 
     if (!customerInfo) {
-        return <div>Loading...</div>
+        return <div>Đang tải...</div>
     }
 
     return (
         <div className='container mx-auto py-6'>
-            <h1 className='text-3xl font-bold mb-6'>My Profile</h1>
+            <h1 className='text-3xl font-bold mb-6'>Hồ sơ của tôi</h1>
             <Tabs defaultValue='personal' className='w-full'>
                 <TabsList className='grid w-full grid-cols-4'>
-                    <TabsTrigger value='personal'>Information</TabsTrigger>
-                    <TabsTrigger value='addresses'>Address</TabsTrigger>
-                    <TabsTrigger value='password'>Change password</TabsTrigger>
-                    <TabsTrigger value='orders'>Order</TabsTrigger>
+                    <TabsTrigger value='personal'>Thông tin</TabsTrigger>
+                    <TabsTrigger value='addresses'>Địa chỉ</TabsTrigger>
+                    <TabsTrigger value='password'>Đổi mật khẩu</TabsTrigger>
+                    <TabsTrigger value='orders'>Đơn hàng</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value='personal'>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Personal Information</CardTitle>
-                            <CardDescription>Manage your personal information</CardDescription>
+                            <CardTitle>Thông tin cá nhân</CardTitle>
+                            <CardDescription>Quản lý thông tin cá nhân của bạn</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <PersonalInfoForm customer={customerInfo} />
@@ -51,8 +51,8 @@ export default function ProfilePage() {
                 <TabsContent value='addresses'>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Address</CardTitle>
-                            <CardDescription>Manage your shipping addresses</CardDescription>
+                            <CardTitle>Địa chỉ</CardTitle>
+                            <CardDescription>Quản lý địa chỉ giao hàng của bạn</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <AddressManager customer={customerInfo} />
@@ -63,8 +63,8 @@ export default function ProfilePage() {
                 <TabsContent value='password'>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Change Password</CardTitle>
-                            <CardDescription>Update your password</CardDescription>
+                            <CardTitle>Thay đổi mật khẩu</CardTitle>
+                            <CardDescription>Cập nhật mật khẩu của bạn</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <PasswordChange />
@@ -75,8 +75,8 @@ export default function ProfilePage() {
                 <TabsContent value='orders'>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Order History</CardTitle>
-                            <CardDescription>View your order history</CardDescription>
+                            <CardTitle>Lịch sử đặt hàng</CardTitle>
+                            <CardDescription>Xem lịch sử đặt hàng của bạn</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <OrderHistory />

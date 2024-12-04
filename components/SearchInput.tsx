@@ -47,7 +47,7 @@ export default function SearchInput() {
                                         className='absolute right-1 scale-75 border-0 p-0'
                                     >
                                         <SearchIcon size={15} />
-                                        <span className='sr-only'>search</span>
+                                        <span className='sr-only'>tìm kiếm</span>
                                     </Button>
                                 </div>
                             </FormControl>

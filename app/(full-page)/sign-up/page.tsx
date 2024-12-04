@@ -28,7 +28,7 @@ const SignUpPage = () => {
 
     const handleGoogleSignUp = () => {
         // Xử lý đăng ký bằng Google
-        console.log('Google sign up')
+        console.log('Đăng ký Google')
     }
 
     return (
@@ -36,8 +36,8 @@ const SignUpPage = () => {
             <div className='w-full max-w-md transform transition-all duration-500'>
                 <Card className='w-full border-0 shadow-lg'>
                     <CardHeader className='space-y-1 pb-8'>
-                        <CardTitle className='text-2xl text-center font-bold'>Create an account</CardTitle>
-                        <CardDescription className='text-center'>Enter your information to get started</CardDescription>
+                        <CardTitle className='text-2xl text-center font-bold'>Tạo tài khoản</CardTitle>
+                        <CardDescription className='text-center'>Nhập thông tin của bạn để bắt đầu</CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
                         {/* Google Sign Up Button */}
@@ -66,7 +66,7 @@ const SignUpPage = () => {
                                     />
                                 </svg>
                             </div>
-                            Continue with Google
+                            Tiếp tục với Google
                         </Button>
 
                         <div className='flex items-center space-x-2'>
@@ -79,7 +79,7 @@ const SignUpPage = () => {
                             {/* Full Name Input */}
                             <div className='space-y-2'>
                                 <Label htmlFor='fullName' className='text-sm font-medium'>
-                                    Full Name
+                                    Họ và tên
                                 </Label>
                                 <div className='relative'>
                                     <User className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
@@ -98,7 +98,7 @@ const SignUpPage = () => {
                             {/* Email Input */}
                             <div className='space-y-2'>
                                 <Label htmlFor='email' className='text-sm font-medium'>
-                                    Email address
+                                    Địa chỉ email
                                 </Label>
                                 <div className='relative'>
                                     <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
@@ -117,7 +117,7 @@ const SignUpPage = () => {
                             {/* Password Input */}
                             <div className='space-y-2'>
                                 <Label htmlFor='password' className='text-sm font-medium'>
-                                    Password
+                                    Mật khẩu
                                 </Label>
                                 <div className='relative'>
                                     <Lock className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
@@ -136,7 +136,7 @@ const SignUpPage = () => {
                             {/* Confirm Password Input */}
                             <div className='space-y-2'>
                                 <Label htmlFor='confirmPassword' className='text-sm font-medium'>
-                                    Confirm Password
+                                    Xác nhận mật khẩu
                                 </Label>
                                 <div className='relative'>
                                     <Lock className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
@@ -159,13 +159,13 @@ const SignUpPage = () => {
                                     htmlFor='terms'
                                     className='text-sm text-gray-500 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                                 >
-                                    I agree to the{' '}
+                                    Tôi đồng ý với{' '}
                                     <Link href='/terms-of-service' className='text-blue-500 hover:text-blue-600'>
-                                        Terms of Service
+                                        Điều khoản dịch vụ
                                     </Link>{' '}
                                     and{' '}
                                     <Link href='/privacy-policy' className='text-blue-500 hover:text-blue-600'>
-                                        Privacy Policy
+                                        Chính sách bảo mật
                                     </Link>
                                 </label>
                             </div>
@@ -179,10 +179,10 @@ const SignUpPage = () => {
                                 {isLoading ? (
                                     <>
                                         <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                                        Creating account...
+                                        Tạo tài khoản...
                                     </>
                                 ) : (
-                                    'Create account'
+                                    'Tạo tài khoản'
                                 )}
                             </Button>
                         </form>
@@ -190,9 +190,9 @@ const SignUpPage = () => {
 
                     <CardFooter className='flex justify-center pb-8'>
                         <span className='text-sm text-gray-500'>
-                            Already have an account?{' '}
+                           Bạn đã có tài khoản?{' '}
                             <Link href='/login' className='text-blue-500 hover:text-blue-600 transition-colors'>
-                                Sign in
+                                Đăng nhập
                             </Link>
                         </span>
                     </CardFooter>

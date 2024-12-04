@@ -7,46 +7,47 @@ export const metadata: Metadata = {
 export default function About() {
     return (
         <section className='px-2 py-4'>
-            <h2 className='p-4 text-3xl font-medium'>About Us</h2>
+            <h2 className='p-4 text-3xl font-medium'>Về chúng tôi</h2>
             <ul className='flex list-inside list-disc flex-col gap-2'>
                 <li>
-                    Established in 2003, Aman Enterprises has been a cornerstone in the manufacturing and distribution
-                    of premium quality bags and pouches.
+                    Được thành lập vào năm 2003, Aman Enterprises đã là nền tảng trong việc sản xuất và phân phối túi và
+                    túi chất lượng cao.
                 </li>
                 <li>
-                    Nestled within the industrious landscape of Uttar Pradesh State Industrial Development Corporation,
-                    Ghaziabad, Uttar Pradesh, our journey began with a vision to blend tradition with modernity,
-                    offering products that resonate with our customers&apos; diverse needs.
+                    Ẩn mình trong cảnh quan cần cù của Tổng công ty Phát triển Công nghiệp Bang Uttar Pradesh,
+                    Ghaziabad, Uttar Pradesh, hành trình của chúng tôi bắt đầu với tầm nhìn pha trộn truyền thống với
+                    hiện đại, cung cấp các sản phẩm phù hợp với nhu cầu đa dạng của khách hàng.
                 </li>
                 <li>
-                    At Aman Enterprises, we take pride in our extensive range of offerings, including cotton bags,
-                    canvas, jute, denim pouches, and more. Our commitment to quality craftsmanship and attention to
-                    detail sets us apart in the industry.
+                    Tại Aman Enterprises, chúng tôi tự hào về nhiều loại dịch vụ của mình, bao gồm túi cotton, vải bạt,
+                    đay, túi denim, v.v. Cam kết của chúng tôi đối với chất lượng thủ công và sự chú ý đến từng chi tiết
+                    khiến chúng tôi trở nên khác biệt trong ngành.
                 </li>
                 <li>
-                    Each product is meticulously crafted to meet the highest standards of durability, functionality, and
-                    style.
+                    Mỗi sản phẩm đều được chế tác tỉ mỉ để đáp ứng các tiêu chuẩn cao nhất về độ bền, chức năng và kiểu
+                    dáng.
                 </li>
                 <li>
-                    With years of experience and expertise, we have cultivated strong relationships with our customers,
-                    both individuals and organizations alike.
+                    Với nhiều năm kinh nghiệm và chuyên môn, chúng tôi đã vun đắp mối quan hệ bền chặt với khách hàng,
+                    cả cá nhân và tổ chức.
                 </li>
                 <li>
-                    We understand the unique requirements of our clients, which is why we offer the flexibility of bulk
-                    orders for organizations seeking high-quality bags and pouches for their various needs.
+                    Chúng tôi hiểu các yêu cầu riêng của khách hàng, đó là lý do tại sao chúng tôi cung cấp sự linh hoạt
+                    của các đơn đặt hàng số lượng lớn cho các tổ chức đang tìm kiếm túi và túi chất lượng cao cho các
+                    nhu cầu khác nhau của họ.
                 </li>
                 <li>
-                    Our dedication to customer satisfaction drives us to continuously innovate and improve our products
-                    and services.
+                    Sự cống hiến của chúng tôi đối với sự hài lòng của khách hàng thúc đẩy chúng tôi liên tục đổi mới và
+                    cải tiến sản phẩm và dịch vụ của mình.
                 </li>
                 <li>
-                    Whether you&apos;re an individual looking for eco-friendly bags or an organization in need of bulk
-                    purchases, Aman Enterprises is your reliable partner every step of the way.
+                    Cho dù bạn là một cá nhân đang tìm kiếm túi thân thiện với môi trường hay một tổ chức cần mua số
+                    lượng lớn, Aman Enterprises là đối tác đáng tin cậy của bạn trong từng bước.
                 </li>
                 <li>
-                    As a proud member of the community, we are committed to sustainability and ethical business
-                    practices. We strive to minimize our environmental footprint and contribute positively to society
-                    through our operations.
+                    Là một thành viên đáng tự hào của cộng đồng, chúng tôi cam kết phát triển bền vững và các hoạt động
+                    kinh doanh có đạo đức. Chúng tôi cố gắng giảm thiểu tác động đến môi trường và đóng góp tích cực cho
+                    xã hội thông qua các hoạt động của mình.
                 </li>
             </ul>
         </section>

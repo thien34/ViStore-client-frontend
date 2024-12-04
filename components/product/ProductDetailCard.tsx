@@ -27,16 +27,16 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
     const onAddCart = async () => {
         if (!customerInfo?.id) {
             toast({
-                title: 'Error',
-                description: 'Please log in to add items to cart',
+                title: 'Lỗi',
+                description: 'Vui lòng đăng nhập để thêm các mặt hàng vào giỏ hàng',
                 variant: 'destructive'
             })
             return
         }
         if (!selectedVariant) {
             toast({
-                title: 'Error',
-                description: 'Please select all product options',
+                title: 'Lỗi',
+                description: 'Vui lòng chọn tất cả các tùy chọn sản phẩm',
                 variant: 'destructive'
             })
             return
@@ -46,8 +46,8 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
             setIsOpen(true)
         } catch (error) {
             toast({
-                title: 'Error',
-                description: 'Failed to add item to cart',
+                title: 'Lỗi',
+                description: 'Không thể thêm mặt hàng vào giỏ hàng',
                 variant: 'destructive'
             })
         }
@@ -121,7 +121,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                     {displayPrice.discountPrice > 0 ? (
                         <>
                             <h2 className='p-2 text-xl font-medium text-primary'>
-                                Price: &#36; {displayPrice.discountPrice}
+                                Giá: &#36; {displayPrice.discountPrice}
                             </h2>
                             <div className='ml-2 line-through text-sm text-gray-500'>
                                 &#36; {displayPrice.unitPrice}
@@ -136,7 +136,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                             </p>
                         </>
                     ) : (
-                        <h2 className='p-2 text-xl font-medium text-primary'>Price: &#36; {displayPrice.unitPrice}</h2>
+                        <h2 className='p-2 text-xl font-medium text-primary'>Giá: &#36; {displayPrice.unitPrice}</h2>
                     )}
                 </div>
 
@@ -159,14 +159,14 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                                     </button>
                                 ))}
                             </div>
-                            {showWarnings[name] && <p className='text-sm text-red-500 mt-1'>Please select {name}</p>}
+                            {showWarnings[name] && <p className='text-sm text-red-500 mt-1'>Vui lòng chọn {name}</p>}
                         </div>
                     ))}
                 </div>
 
                 {/* Quantity selector */}
                 <div className=' ml-2 mt-4 space-y-2'>
-                    <h3 className='font-medium'>Quantity:</h3>
+                    <h3 className='font-medium'>Số lượng:</h3>
                     <div className='flex items-center space-x-2'>
                         <Button
                             variant='outline'
@@ -198,7 +198,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                 {/* Stock display */}
                 <div className='mt-4'>
                     {selectedVariant && (
-                        <p className='text-sm text-gray-600'>Available: {selectedVariant.quantity} items</p>
+                        <p className='text-sm text-gray-600'>Có sẵn: {selectedVariant.quantity} sản phẩm</p>
                     )}
                 </div>
 
@@ -209,14 +209,14 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                         className='relative w-full rounded-full border transition duration-100 active:scale-95'
                     >
                         <ShoppingCart className='absolute left-0 ml-4 h-6 w-6' />
-                        Add to Cart
+                        Thêm vào giỏ
                     </Button>
                     <Link href='/cart'>
                         <Button
                             variant='default'
                             className='relative mt-2 w-full rounded-full border transition duration-100 active:scale-95'
                         >
-                            Buy Now
+                            Mua ngay
                         </Button>
                     </Link>
                 </div>

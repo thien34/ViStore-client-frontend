@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 export default function Contact() {
     return (
         <section className='px-2 py-4'>
-            <h2 className='p-4 text-3xl font-medium'>Contact Us</h2>
+            <h2 className='p-4 text-3xl font-medium'>Liên hệ với chúng tôi</h2>
             <Table>
                 <TableBody>
                     <TableRow>
-                        <TableCell>Company Name:</TableCell>
+                        <TableCell>Tên công ty:</TableCell>
                         <TableCell>{COMPANY_NAME}</TableCell>
                     </TableRow>
                     <TableRow>
@@ -21,11 +21,11 @@ export default function Contact() {
                         <TableCell>{OWNER_NAME}</TableCell>
                     </TableRow>
                     <TableRow>
-                        <TableCell>Address:</TableCell>
+                        <TableCell>Địa chỉ:</TableCell>
                         <TableCell>{COMPANY_ADDRESS}</TableCell>
                     </TableRow>
                     <TableRow>
-                        <TableCell>Phone Number:</TableCell>
+                        <TableCell>Số điện thoại:</TableCell>
                         <TableCell>
                             {OWNER_PHONE_1}, {OWNER_PHONE_2}
                         </TableCell>

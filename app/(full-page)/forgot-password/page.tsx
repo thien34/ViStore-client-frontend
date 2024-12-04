@@ -35,9 +35,9 @@ const ForgotPasswordPage = () => {
                             <ArrowLeft className='h-4 w-4' />
                         </Button>
 
-                        <CardTitle className='text-2xl text-center font-bold'>Reset your password</CardTitle>
+                        <CardTitle className='text-2xl text-center font-bold'>Đặt lại mật khẩu của bạn</CardTitle>
                         <CardDescription className='text-center'>
-                            Enter your email address and we&apos;ll send you instructions to reset your password
+                            Nhập địa chỉ email của bạn và chúng tôi&apos;sẽ gửi cho bạn hướng dẫn đặt lại mật khẩu của bạn
                         </CardDescription>
                     </CardHeader>
 
@@ -51,8 +51,7 @@ const ForgotPasswordPage = () => {
                                     </div>
                                     <Alert>
                                         <AlertDescription className='text-center'>
-                                            We&apos;ve sent a password reset link to <strong>{email}</strong>. Please
-                                            check your email and follow the instructions to reset your password.
+                                            Chúng ta&apos;đã gửi liên kết đặt lại mật khẩu đến <strong>{email}</strong>.Vui lòng kiểm tra email của bạn và làm theo hướng dẫn để đặt lại mật khẩu của bạn.
                                         </AlertDescription>
                                     </Alert>
                                 </div>
@@ -64,14 +63,14 @@ const ForgotPasswordPage = () => {
                                             setEmail('')
                                         }}
                                     >
-                                        Send again
+                                        Gửi lại
                                     </Button>
                                     <Button
                                         variant='outline'
                                         className='w-full h-11'
                                         onClick={() => window.history.back()}
                                     >
-                                        Back to sign in
+                                        Quay lại đăng nhập
                                     </Button>
                                 </div>
                             </div>
@@ -80,7 +79,7 @@ const ForgotPasswordPage = () => {
                             <form onSubmit={handleSubmit} className='space-y-4'>
                                 <div className='space-y-2'>
                                     <Label htmlFor='email' className='text-sm font-medium'>
-                                        Email address
+                                        Địa chỉ email
                                     </Label>
                                     <div className='relative'>
                                         <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
@@ -105,7 +104,7 @@ const ForgotPasswordPage = () => {
                                     {isLoading ? (
                                         <>
                                             <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                                            Sending instructions...
+                                            Gửi hướng dẫn...
                                         </>
                                     ) : (
                                         'Send instructions'
@@ -117,9 +116,9 @@ const ForgotPasswordPage = () => {
 
                     <CardFooter className='flex justify-center pb-8'>
                         <span className='text-sm text-gray-500'>
-                            Remember your password?{' '}
+                            Bạn nhớ mật khẩu của bạn?{' '}
                             <Link href='/login' className='text-blue-500 hover:text-blue-600 transition-colors'>
-                                Sign in
+                                Đăng nhập
                             </Link>
                         </span>
                     </CardFooter>
