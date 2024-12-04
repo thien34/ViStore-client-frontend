@@ -11,7 +11,6 @@ import customerService from '@/service/customer.service'
 import { CustomerUpdateRequest } from '@/interface/customer.interface'
 import React from 'react'
 import { Toaster } from '../ui/toaster'
-// Update the ToastOptions type definition
 interface ToastOptions {
     duration?: number
     title: string
@@ -27,7 +26,7 @@ const personalInfoSchema = z.object({
     gender: z.number().refine((value) => [0, 1, 2].includes(value), {
         message: 'Giới tính không hợp lệ'
     }),
-    dateOfBirth: z.string() // Chuyển đổi Date thành string để sử dụng trong form
+    dateOfBirth: z.string()
 })
 
 interface PersonalInfoFormProps {
@@ -49,7 +48,6 @@ export function PersonalInfoForm({ toast, customer, setCustomerInfo }: PersonalI
     })
 
     async function onSubmit(values: z.infer<typeof personalInfoSchema>) {
-        // TODO: Implement update profile logic
         const customerId = customer.id
         try {
             const updateValues: CustomerUpdateRequest = {
