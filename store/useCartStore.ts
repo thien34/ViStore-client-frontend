@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { CartRequest, CartResponse, CartUpdateRequest } from '@/interface/cart.interface'
 import cartService from '@/service/cart.service'
+import { toast } from '@/components/ui/use-toast'
 
 interface CartState {
     items: CartResponse[]
@@ -74,12 +75,12 @@ export const useCartStore = create<CartState>()(
                 try {
                     set({ loading: true })
                     await cartService.update(cartId, { quantity })
-                    // Fetch updated cart
                     const response = await cartService.getAll(customerId)
                     set({ items: response.payload })
-                } catch (error) {
-                    console.error('Failed to update quantity:', error)
-                    throw error
+                } catch (error: any) {
+                    toast({
+                        title: 'Failed to update quantity'
+                    })
                 } finally {
                     set({ loading: false })
                 }

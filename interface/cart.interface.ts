@@ -7,6 +7,7 @@ export interface CartResponse {
     unitPrice: number
     discountPrice: number
     quantity: number
+    quantityProduct: number
     attributeProduct: string
 }
 

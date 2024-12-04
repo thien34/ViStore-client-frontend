@@ -118,7 +118,7 @@ const CheckoutPage = () => {
                     length: 15,
                     weight: cartItems1.reduce((total, item) => total + 500 * item.quantity, 0), // Giả sử mỗi sản phẩm 500g
                     width: 20,
-                    insurance_value: subtotal, // Giá trị bảo hiểm = giá trị đơn hàng
+                    insurance_value: 0,
                     coupon: null,
                     items: cartItems1.map((item) => ({
                         name: item.name,

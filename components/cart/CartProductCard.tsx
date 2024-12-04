@@ -31,7 +31,14 @@ export default function CartProductCard({
                 <div className='flex flex-col justify-between gap-2 pl-2 md:pl-4'>
                     <div className='w-full'>
                         <div className='line-clamp-2 text-sm font-medium leading-tight'>{product.name}</div>
-                        <div className='mt-1 text-sm text-primary opacity-95'>${product.unitPrice}</div>
+                        {product.discountPrice > 0 ? (
+                            <div className='flex gap-2 items-center'>
+                                <p className='font-medium text-primary'>&#36; {product.discountPrice}</p>
+                                <p className='text-xs text-gray-500 line-through'>&#36; {product.unitPrice}</p>
+                            </div>
+                        ) : (
+                            <p className='font-medium text-primary'>&#36; {product.unitPrice}</p>
+                        )}
                         <div className='text-xs text-gray-500 bg-gray-100 inline-block p-1 m-1 rounded'>
                             {product.attributeProduct}
                         </div>

@@ -11,7 +11,10 @@ interface CartSummaryProps {
 
 export default function CartSummary({ selectedItems, items, onCheckout, onSelectAll }: CartSummaryProps) {
     const selectedProducts = items.filter((item) => selectedItems.includes(item.id))
-    const totalPrice = selectedProducts.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+    const totalPrice = selectedProducts.reduce(
+        (sum, item) => sum + (item.discountPrice > 0 ? item.discountPrice : item.unitPrice) * item.quantity,
+        0
+    )
     const totalItems = selectedProducts.reduce((sum, item) => sum + item.quantity, 0)
 
     return (

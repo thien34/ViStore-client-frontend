@@ -53,44 +53,50 @@ export default function CartItem({ item, isSelected, onSelect, onUpdateQuantity,
 
                     <div className='flex items-center justify-between'>
                         <div className='text-red-500 font-medium'>
-                            ${item.unitPrice}
-                            {item.discountPrice > 0 && (
-                                <span className='text-gray-400 line-through text-sm ml-2'>${item.discountPrice}</span>
+                            {item.discountPrice > 0 ? (
+                                <div className='flex gap-2 items-center'>
+                                    <p className='font-medium text-primary'>&#36; {item.discountPrice}</p>
+                                    <p className='text-xs text-gray-500 line-through'>&#36; {item.unitPrice}</p>
+                                </div>
+                            ) : (
+                                <p className='font-medium text-primary'>&#36; {item.unitPrice}</p>
                             )}
                         </div>
+                        <div className='space-y-1'>
+                            <div className='text-xs text-right text-gray-500 '>Available: {item.quantityProduct}</div>
+                            <div className='flex items-center space-x-2'>
+                                <Button
+                                    variant='outline'
+                                    size='icon'
+                                    className='h-8 w-8'
+                                    onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                                    disabled={item.quantity <= 1}
+                                >
+                                    <Minus className='w-3 h-3' />
+                                </Button>
 
-                        <div className='flex items-center space-x-2'>
-                            <Button
-                                variant='outline'
-                                size='icon'
-                                className='h-8 w-8'
-                                onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                                disabled={item.quantity <= 1}
-                            >
-                                <Minus className='w-3 h-3' />
-                            </Button>
+                                <Input
+                                    type='text'
+                                    value={item.quantity}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value)
+                                        if (!isNaN(value) && value >= 1) {
+                                            onUpdateQuantity(item.id, value)
+                                        }
+                                    }}
+                                    className='w-14 h-8 text-center p-1'
+                                    min='1'
+                                />
 
-                            <Input
-                                type='number'
-                                value={item.quantity}
-                                onChange={(e) => {
-                                    const value = parseInt(e.target.value)
-                                    if (!isNaN(value) && value >= 1) {
-                                        onUpdateQuantity(item.id, value)
-                                    }
-                                }}
-                                className='w-14 h-8 text-center p-1'
-                                min='1'
-                            />
-
-                            <Button
-                                variant='outline'
-                                size='icon'
-                                className='h-8 w-8'
-                                onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                            >
-                                <Plus className='w-3 h-3' />
-                            </Button>
+                                <Button
+                                    variant='outline'
+                                    size='icon'
+                                    className='h-8 w-8'
+                                    onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                                >
+                                    <Plus className='w-3 h-3' />
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
