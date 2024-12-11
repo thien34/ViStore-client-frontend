@@ -13,8 +13,8 @@ import * as z from 'zod'
 import { CustomerFullResponse } from '@/interface/auth.interface'
 import addressService from '@/service/address.service'
 import { AddressesResponse, AddressRequest, District, Province, Ward } from '@/interface/address.interface'
-import { useToast } from '../ui/use-toast'
 import { getDistricts, getProvinces, getWards } from '@/service/shipping.service'
+import { useToast } from '@/components/ui/use-toast'
 
 const addressSchema = z.object({
     firstName: z.string().min(2, 'Tên phải có ít nhất 2 ký tự'),
@@ -36,12 +36,11 @@ export function AddressManager({ customer }: AddressManagerProps) {
     const [addresses, setAddresses] = useState<AddressesResponse[]>([])
     const [isAddingNew, setIsAddingNew] = useState(false)
     const [editingAddress, setEditingAddress] = useState<AddressesResponse | null>(null)
-
+    const { toast } = useToast()
     // Location states
     const [provinces, setProvinces] = useState<Province[]>([])
     const [districts, setDistricts] = useState<District[]>([])
     const [wards, setWards] = useState<Ward[]>([])
-    const { toast } = useToast()
 
     // Form setup
     const form = useForm<z.infer<typeof addressSchema>>({
@@ -109,21 +108,29 @@ export function AddressManager({ customer }: AddressManagerProps) {
     }
 
     // Prepare address for editing
-    const prepareEditAddress = (address: AddressesResponse) => {
+    const prepareEditAddress = async (address: AddressesResponse) => {
         setEditingAddress(address)
-        form.reset({
-            firstName: address.firstName,
-            lastName: address.lastName,
-            phoneNumber: address.phoneNumber,
-            addressName: address.addressDetail,
-            provinceId: '', // Will be set after loading districts
-            districtId: '', // Will be set after loading wards
-            wardId: '',
-            email: address.email,
-            company: address.company
-        })
+        const { payload: addressData } = await addressService.getById(address.id ?? 0)
+        const districtsData = await getDistricts(Number(addressData.provinceId))
+        setDistricts(districtsData)
+        const wardsData = await getWards(Number(addressData.districtId))
+        setWards(wardsData)
 
-        // TODO: Add logic to pre-select province, district, ward based on existing address
+        setTimeout(
+            () =>
+                form.reset({
+                    firstName: addressData.firstName,
+                    lastName: addressData.lastName,
+                    phoneNumber: addressData.phoneNumber,
+                    addressName: addressData.addressName,
+                    provinceId: addressData.provinceId,
+                    districtId: addressData.districtId,
+                    wardId: addressData.wardId,
+                    email: addressData.email,
+                    company: addressData.company ?? ''
+                }),
+            10
+        )
     }
 
     // Submit form for creating/updating address
@@ -138,8 +145,18 @@ export function AddressManager({ customer }: AddressManagerProps) {
 
             if (editingAddress) {
                 await addressService.update(editingAddress?.id ?? 0, addressData)
+                toast({
+                    title: 'Cập nhật thành công',
+                    description: 'Địa chỉ của bạn đã được cập nhật',
+                    variant: 'default'
+                })
             } else {
                 await addressService.create(addressData)
+                toast({
+                    title: 'Thêm địa chỉ thành công',
+                    description: 'Địa chỉ của bạn đã được thêm',
+                    variant: 'default'
+                })
             }
 
             // Refresh addresses
@@ -179,7 +196,7 @@ export function AddressManager({ customer }: AddressManagerProps) {
                 className='mb-4'
             >
                 <PlusCircle className='mr-2 h-4 w-4' />
-                Add new address
+                Thêm địa chỉ mới
             </Button>
 
             <div className='grid gap-4'>
@@ -215,10 +232,24 @@ export function AddressManager({ customer }: AddressManagerProps) {
 
             <Dialog
                 open={isAddingNew || !!editingAddress}
-                onOpenChange={() => {
-                    setIsAddingNew(false)
-                    setEditingAddress(null)
-                    form.reset()
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setIsAddingNew(false)
+                        setEditingAddress(null)
+                        form.reset({
+                            firstName: '',
+                            lastName: '',
+                            phoneNumber: '',
+                            addressName: '',
+                            provinceId: '',
+                            districtId: '',
+                            wardId: '',
+                            email: '',
+                            company: ''
+                        })
+                        setDistricts([])
+                        setWards([])
+                    }
                 }}
             >
                 <DialogContent>
@@ -390,7 +421,7 @@ export function AddressManager({ customer }: AddressManagerProps) {
                                     name='email'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email (Tùy chọn)</FormLabel>
+                                            <FormLabel>Email</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>

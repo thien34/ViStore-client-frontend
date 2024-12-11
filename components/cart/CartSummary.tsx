@@ -26,13 +26,13 @@ export default function CartSummary({ selectedItems, items, onCheckout, onSelect
                         onCheckedChange={(checked: boolean) => onSelectAll(checked)}
                     />
                     <span>
-                        Select All ({selectedItems.length}/{items.length})
+                        Chọn ({selectedItems.length}/{items.length})
                     </span>
                 </div>
 
                 <div className='flex-1 md:flex md:justify-end m-2'>
                     <div className='space-y-1 md:text-right'>
-                        <div className='text-sm text-gray-500'>Tổng thanh toán ({totalItems} items):</div>
+                        <div className='text-sm text-gray-500'>Tổng thanh toán ({totalItems} sản phẩm):</div>
                         <div className='text-xl text-red-500 font-medium'>${totalPrice.toLocaleString('en-US')}</div>
                     </div>
                 </div>
@@ -43,7 +43,7 @@ export default function CartSummary({ selectedItems, items, onCheckout, onSelect
                     onClick={onCheckout}
                     disabled={selectedItems.length === 0}
                 >
-                    Checkout
+                    Thanh toán
                 </Button>
             </div>
         </div>

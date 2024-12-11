@@ -7,16 +7,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { CustomerFullResponse } from '@/interface/auth.interface'
+import customerService from '@/service/customer.service'
 
-// Định nghĩa schema cho form validation
 const personalInfoSchema = z.object({
     email: z.string().email(),
     firstName: z.string().min(2),
     lastName: z.string().min(2),
-    gender: z.number().refine((value) => [0, 1, 2].includes(value), {
+    gender: z.number().refine((value) => [0, 1].includes(value), {
         message: 'Giới tính không hợp lệ'
     }),
-    dateOfBirth: z.string() // Chuyển đổi Date thành string để sử dụng trong form
+    dateOfBirth: z.string()
 })
 
 interface PersonalInfoFormProps {
@@ -36,8 +36,19 @@ export function PersonalInfoForm({ customer }: PersonalInfoFormProps) {
     })
 
     function onSubmit(values: z.infer<typeof personalInfoSchema>) {
-        // TODO: Implement update profile logic
-        console.log(values)
+        customerService
+            .update(customer.id, {
+                ...values,
+                dateOfBirth: new Date(values.dateOfBirth),
+                customerRoles: customer.customerRoles,
+                active: customer.active
+            })
+            .then((response) => {
+                console.log('Profile updated successfully', response.payload)
+            })
+            .catch((error) => {
+                console.error('Error updating profile', error)
+            })
     }
 
     return (

@@ -308,14 +308,14 @@ const CheckoutPage = () => {
                                         name='paymentMethod'
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Payment Method</FormLabel>
+                                                <FormLabel>Phương thức thanh toán</FormLabel>
                                                 <Select onValueChange={field.onChange} value={field.value}>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder='Chọn phương thức thanh toán' />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectItem value='cod'>Thanh toán khi nhận hàng</SelectItem>
-                                                        <SelectItem value='stripe'>Thanh toán bằng Stripe</SelectItem>
+                                                        <SelectItem value='bank'>Thanh toán bằng ngân hàng</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />

@@ -65,7 +65,7 @@ export default function CartSheet() {
             </SheetTrigger>
             <SheetContent className='flex flex-col p-2'>
                 <SheetHeader className='p-2'>
-                    <SheetTitle>Giỏ haàng</SheetTitle>
+                    <SheetTitle>Giỏ hàng</SheetTitle>
                 </SheetHeader>
                 <SheetDescription className='text-gray-500'>{items.length > 0 ? '' : 'Trống'}</SheetDescription>
                 <div className='h-full overflow-y-auto'>
