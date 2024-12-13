@@ -15,19 +15,21 @@ const httpInstance = async function <Response>(path: string, method: Method, dat
         ...config
     }
 
-    try {
-        const res = await fetch(fullUrl, requestOptions)
-        const payload = await res.json()
-        if (!res.ok) {
-            throw new Error('Error in fetching data')
+    const res = await fetch(fullUrl, requestOptions)
+    const payload = await res.json()
+
+    if (!res.ok) {
+        throw {
+            response: {
+                status: res.status,
+                data: payload
+            }
         }
-        return {
-            payload: payload.data as Response,
-            status: res.status
-        }
-    } catch (error) {
-        console.error('HTTP request failed:', error)
-        throw error
+    }
+
+    return {
+        payload: payload.data as Response,
+        status: res.status
     }
 }
 

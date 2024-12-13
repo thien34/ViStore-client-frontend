@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { Product } from '@/interface/product.interface'
+import { formatCurrency } from '@/lib/utils'
 
 export default function ProductCard({ product }: { product: Product }) {
     return (
@@ -26,13 +27,13 @@ export default function ProductCard({ product }: { product: Product }) {
                 <CardFooter className='w-full p-2 pt-0 justify-between'>
                     {product.discountPrice > 0 ? (
                         <div className='flex'>
-                            <p className='font-medium text-primary'>&#36; {product.discountPrice}</p>
+                            <p className='font-medium text-primary'>{formatCurrency(product.discountPrice)}</p>
                             <p className='text-xs ml-1 bg-red-200 text-red-600 p-[3px] rounded-sm'>
                                 -{Math.round(((product.unitPrice - product.discountPrice) / product.unitPrice) * 100)}%
                             </p>
                         </div>
                     ) : (
-                        <p className='font-medium text-primary'>&#36; {product.unitPrice}</p>
+                        <p className='font-medium text-primary'>{formatCurrency(product.unitPrice)}</p>
                     )}
                     <div className='text-xs text-gray-500'>Đã bán: {product.sold}</div>
                 </CardFooter>

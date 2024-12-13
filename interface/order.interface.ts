@@ -44,7 +44,6 @@ export interface AddressRequest {
     wardId: string
     phoneNumber: string
 }
-
 export enum PaymentMethodType {
     Cash = 0,
     BankTransfer = 1,
@@ -57,8 +56,8 @@ export enum PaymentStatusType {
     CashOnDelivery = 3
 }
 export enum PaymentModeType {
-    Online = 1,
-    IN_STORE = 2
+    Online = 0,
+    IN_STORE = 1
 }
 
 export enum OrderStatusType {

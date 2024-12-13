@@ -1,24 +1,22 @@
 export interface Voucher {
-    id?: number
+    id: number
     name: string
-    comment: string
-    discountTypeId: number
-    usePercentage: boolean
-    discountPercentage: number
-    discountAmount: number
+    discountTypeName: string
+    discountAmount: number | null
+    discountPercentage: number | null
+    startDateUtc: string
+    endDateUtc: string
     limitationTimes: number
-    startDateUtc?: string
-    endDateUtc?: string
-    selectedCustomerIds: number[]
     status: string
     requiresCouponCode: boolean
-    isCumulative: boolean
     couponCode: string
-    discountLimitationId: number
-    maxDiscountAmount: number
+    maxDiscountAmount: number | null
     minOderAmount: number
+    usePercentage: boolean
+    isCumulative: boolean
+    appliedCustomerIds: string[] | null
     isPublished: boolean
-    perCustomerLimit: number
+    usageCount: number
 }
 
 export interface Vouchers {

@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import ViStore from '@/public/ViStore.png'
 import './globals.css'
+import { Toaster } from '@/components/ui/toaster'
 
 import {
     SITE_CATEGORY,
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang='en' suppressHydrationWarning>
             <body className={cn('min-h-svh bg-background antialiased', inter.variable, inter.className)}>
                 <main className='mx-auto max-w-7xl'>{children}</main>
+                <Toaster />
             </body>
         </html>
     )

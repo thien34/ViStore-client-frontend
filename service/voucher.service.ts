@@ -17,6 +17,11 @@ class VoucherService {
         const response = await http.post(path, data)
         return response.payload
     }
+
+    async getById(id: number) {
+        const response = await http.get<Voucher>(`${this.basePath}/${id}`)
+        return response
+    }
 }
 
 const voucherService = new VoucherService()
