@@ -53,11 +53,21 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
         }
     }
 
-    const handleQuantityChange = (value: number) => {
-        if (selectedVariant) {
-            const newQuantity = Math.min(Math.max(1, value), selectedVariant.quantity)
-            setQuantity(newQuantity)
+    const handleQuantityChange = (value: string | number) => {
+        if (!selectedVariant) return
+
+        let newValue: number
+        if (typeof value === 'string') {
+            // Remove leading zeros and non-numeric characters
+            const cleanValue = value.replace(/^0+|[^0-9]/g, '')
+            newValue = cleanValue === '' ? 0 : parseInt(cleanValue)
+        } else {
+            newValue = value
         }
+
+        // Ensure the value is within valid range
+        newValue = Math.min(Math.max(0, newValue), selectedVariant.quantity)
+        setQuantity(newValue)
     }
 
     const uniqueAttributes = useMemo(() => {
@@ -165,24 +175,24 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                 </div>
 
                 {/* Quantity selector */}
-                <div className=' ml-2 mt-4 space-y-2'>
+                <div className='ml-2 mt-4 space-y-2'>
                     <h3 className='font-medium'>Số lượng:</h3>
                     <div className='flex items-center space-x-2'>
                         <Button
                             variant='outline'
                             size='icon'
                             onClick={() => handleQuantityChange(quantity - 1)}
-                            disabled={quantity <= 1}
+                            disabled={quantity <= 1 || !selectedVariant?.quantity}
                         >
                             <MinusIcon className='h-4 w-4' />
                         </Button>
                         <Input
                             type='text'
                             value={quantity}
-                            onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                            onChange={(e) => handleQuantityChange(e.target.value)}
                             className='w-20 text-center'
-                            min={1}
-                            max={selectedVariant?.quantity || 1}
+                            maxLength={3}
+                            disabled={!selectedVariant?.quantity}
                         />
                         <Button
                             variant='outline'
@@ -198,7 +208,9 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                 {/* Stock display */}
                 <div className='mt-4'>
                     {selectedVariant && (
-                        <p className='text-sm text-gray-600'>Có sẵn: {selectedVariant.quantity} sản phẩm</p>
+                        <p className='text-sm text-gray-600'>
+                            {selectedVariant.quantity > 0 ? `Có sẵn: ${selectedVariant.quantity} sản phẩm` : 'Hết hàng'}
+                        </p>
                     )}
                 </div>
 
@@ -207,6 +219,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                         onClick={onAddCart}
                         variant='secondary'
                         className='relative w-full rounded-full border transition duration-100 active:scale-95'
+                        disabled={!selectedVariant?.quantity || quantity === 0}
                     >
                         <ShoppingCart className='absolute left-0 ml-4 h-6 w-6' />
                         Thêm vào giỏ
@@ -215,6 +228,7 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                         <Button
                             variant='default'
                             className='relative mt-2 w-full rounded-full border transition duration-100 active:scale-95'
+                            disabled={!selectedVariant?.quantity || quantity === 0}
                         >
                             Mua ngay
                         </Button>
