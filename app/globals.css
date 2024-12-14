@@ -52,15 +52,20 @@
 
 @keyframes falling {
     0% {
-        transform: translateY(-10vh);
+        transform: rotate(calc(var(--fall-direction))) translateY(-10vh) translateX(0);
     }
     100% {
-        transform: translateY(100vh);
+        transform: rotate(calc(var(--fall-direction))) translateY(100vh) translateX(var(--horizontal-movement));
     }
 }
 
 .falling-container div {
+    will-change: transform;
+}
+
+.falling-item {
     animation: falling linear forwards;
+    transform-origin: center center;
 }
 
 @layer base {
