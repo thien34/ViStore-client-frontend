@@ -9,6 +9,16 @@ class ProductService {
         return response
     }
 
+    async getRootProductsBestSelling() {
+        const response = await http.get<Product[]>(`${this.basePath}/best-selling`)
+        return response
+    }
+
+    async getRootProductsDiscount() {
+        const response = await http.get<Product[]>(`${this.basePath}/product-discount`)
+        return response
+    }
+
     async getProductsByCategory(categorySlug: string) {
         const response = await http.get<Product[]>(`${this.basePath}/${categorySlug}`)
         return response
