@@ -56,8 +56,8 @@ export enum PaymentStatusType {
     CashOnDelivery = 3
 }
 export enum PaymentModeType {
-    Online = 0,
-    IN_STORE = 1
+    Online = 1,
+    IN_STORE = 2
 }
 
 export enum OrderStatusType {
