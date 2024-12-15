@@ -44,10 +44,10 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
         try {
             await addToCart({ customerId: customerInfo.id, productId: selectedVariant.id, quantity })
             setIsOpen(true)
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 title: 'Lỗi',
-                description: 'Không thể thêm mặt hàng vào giỏ hàng',
+                description: error?.response?.data?.message,
                 variant: 'destructive'
             })
         }
