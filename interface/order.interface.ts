@@ -78,7 +78,6 @@ export interface OrderResponse {
     orderCode: string
     billCode: string
     customerName: string
-    orderTotal: number
     totalItem: number
     paidDateUtc: string
     orderStatus: number
@@ -86,9 +85,61 @@ export interface OrderResponse {
     paymentMethod: number
     paymentMode: number
     customerId: number
+    orderSubtotal: number
+    orderTotal: number
     orderShippingTotal: number
     orderDiscountTotal: number
     orderSubtotalDiscount: number
+}
+
+export interface OrderStatusHistoryResponse {
+    id: number
+    orderId: number
+    status: number
+    notes: string
+    paidDate: string
+    createdBy: string
+    updatedBy: string
+    createdDate: string
+    updatedDate: string
+}
+
+export interface CustomerOrderResponse {
+    id: number
+    customerId: number
+    billId: string
+    firstName: string
+    lastName: string
+    phoneNumber: string
+    delivery: string
+    orderStatusType: number
+    paymentStatusType: number
+    paymentMethod: number
+}
+
+export interface CustomerOrder {
+    id: number
+    customerName: string
+    customerPhone: string
+    addressOrder: string
+    addressId: number
+}
+
+export interface OrderItemsResponse {
+    id: number
+    orderCode: string
+    orderItemGuid: string
+    quantity: number
+    unitPrice: number
+    priceTotal: number
+    discountAmount: number
+    originalProductCost: number
+    attributeDescription: string
+    productJson: string
+    itemWeight: number
+    deliveryStatus: number
+    orderStatusHistoryResponses: OrderStatusHistoryResponse[]
+    customerOrder: CustomerOrder | null
 }
 
 export interface OrderFilter {

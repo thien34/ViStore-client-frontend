@@ -75,8 +75,8 @@ export default function ProfilePage() {
                 <TabsContent value='orders'>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Lịch sử đặt hàng</CardTitle>
-                            <CardDescription>Xem lịch sử đặt hàng của bạn</CardDescription>
+                            <CardTitle>Đơn hàng của tôi</CardTitle>
+                            <CardDescription>Lịch sử đơn hàng của bạn</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <OrderHistory />

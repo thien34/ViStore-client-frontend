@@ -9,6 +9,15 @@ export interface Product {
     sold: number
 }
 
+export interface ProductAttribute {
+    productAttribute: {
+        name: string
+    }
+    id: number
+    name: string
+    value: string
+}
+
 export interface ProductDetail {
     id: number
     slug: string
