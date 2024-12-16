@@ -8,8 +8,10 @@ export function OrderHistory() {
     const [orders, setOrders] = useState<OrderResponse[]>([])
 
     useEffect(() => {
+        const userDataString = localStorage.getItem('user')
+        const userData = userDataString ? JSON.parse(userDataString) : null
         const loadOrders = async () => {
-            const { payload: response } = await OrderService.getOrders({})
+            const { payload: response } = await OrderService.getOrdersByCustomer(userData.customerInfo.id)
             setOrders(response)
         }
         loadOrders()

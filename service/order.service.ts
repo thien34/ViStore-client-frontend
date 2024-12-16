@@ -10,6 +10,7 @@ import http from '@/lib/http'
 
 class OrderService {
     private static basePath = '/api/admin/orders'
+    private static basePathClient = '/api/client/orders'
 
     static async createOrder(order: OrderRequest) {
         return await http.post<OrderRequest>(`${this.basePath}`, order)
@@ -18,6 +19,10 @@ class OrderService {
     static async getOrders(filter: OrderFilter) {
         const params = new URLSearchParams(filter as Record<string, string>)
         return await http.get<OrderResponse[]>(`${this.basePath}?${params}`)
+    }
+
+    static async getOrdersByCustomer(id: number) {
+        return await http.get<OrderResponse[]>(`${this.basePathClient}/${id}`)
     }
 
     static async getOrder(id: number, filter: OrderFilter) {
