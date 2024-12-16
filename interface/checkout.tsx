@@ -25,13 +25,6 @@ export interface Discount {
     description: string
 }
 
-export interface ShippingCalculation {
-    fee: number
-    service_id: number
-    service_name: string
-    estimated_delivery_time: string
-}
-
 export interface OrderSummary {
     subtotal: number
     shippingFee: number
