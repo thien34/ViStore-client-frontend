@@ -185,6 +185,12 @@ const CheckoutPage = () => {
                     })
                     router.push('/checkout/success')
                 }
+            }).catch((error) => {
+                toast({
+                    title: 'Đặt hàng thất bại',
+                    description: error.response.data.message,
+                    variant: 'default'
+                })
             })
         } catch (error) {
             console.log('Lỗi tạo lệnh:', error)
