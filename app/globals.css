@@ -76,3 +76,19 @@
         @apply bg-background text-foreground;
     }
 }
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .print-content,
+    .print-content * {
+        visibility: visible;
+    }
+    .print-content {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}
