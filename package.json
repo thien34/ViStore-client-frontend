@@ -10,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@payos/node": "^1.0.10",
+    "@payos/payos-checkout": "^1.0.8",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",

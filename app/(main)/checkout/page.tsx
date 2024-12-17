@@ -23,12 +23,13 @@ import OrderService from '@/service/order.service'
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/navigation'
 import { formatCurrency } from '@/lib/utils'
+import PayOSForm from '@/components/checkout/PayOSEmbeddedForm'
 
 const formSchema = z.object({
     addressId: z.string().min(1, 'Vui lòng chọn địa chỉ giao hàng'),
     note: z.string(),
     voucher: z.string(),
-    paymentMethod: z.enum(['cod', 'stripe'])
+    paymentMethod: z.enum(['cod', 'bank'])
 })
 
 const CheckoutPage = () => {
@@ -58,6 +59,8 @@ const CheckoutPage = () => {
             paymentMethod: 'cod'
         }
     })
+    const [showPayOS, setShowPayOS] = useState(false)
+    const [amountPaid, setAmountPaid] = useState(0)
 
     useEffect(() => {
         const userDataString = localStorage.getItem('user')
@@ -130,7 +133,19 @@ const CheckoutPage = () => {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setLoading(true)
         try {
-            console.log('Dữ liệu đơn hàng:', { ...data, items: cartItems1, summary: orderSummary })
+            if (data.paymentMethod === 'bank') {
+                const paymentOSRequest = {
+                    amount: orderSummary.total,
+                    orderId: uuidv4(),
+                    description: `Thanh toán đơn hàng cho ${customer?.firstName} ${customer?.lastName}`,
+                    cancelUrl: window.location.href,
+                    returnUrl: `${window.location.origin}/checkout/success`
+                }
+                setShowPayOS(true)
+                return
+            }
+
+            // Existing COD payment logic
             const order: OrderRequest = {
                 customerId: customer?.id || 0,
                 orderGuid: uuidv4(),
@@ -139,7 +154,7 @@ const CheckoutPage = () => {
                 pickupInStore: false,
                 orderStatusId: 1,
                 paymentStatusId: PaymentStatusType.Paid,
-                paymentMethodId: PaymentMethodType.Cod,
+                paymentMethodId: data.paymentMethod === 'cod' ? PaymentMethodType.Cod : PaymentMethodType.BankTransfer,
                 paymentMode: PaymentModeType.Online,
                 orderSubtotal: orderSummary.subtotal,
                 orderSubtotalDiscount: orderSummary.discounts.promotions + orderSummary.discounts.vouchers,
@@ -199,198 +214,233 @@ const CheckoutPage = () => {
         }
     }
 
+    useEffect(() => {
+        if (amountPaid > 0) {
+            // Process successful payment
+            // You may want to create the order here after successful payment
+            router.push('/checkout/success')
+        }
+    }, [amountPaid, router])
+
     return (
         <div className='container mx-auto p-4'>
-            <div className='grid grid-cols-1 lg:grid-cols-12 gap-6'>
-                {/* Form thanh toán */}
-                <div className='lg:col-span-7'>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Thông tin thanh toán</CardTitle>
-                            <CardDescription>Vui lòng điền đầy đủ thông tin đặt hàng</CardDescription>
-                        </CardHeader>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)}>
-                                <CardContent className='space-y-4'>
-                                    {/* Địa chỉ giao hàng */}
-                                    <FormField
-                                        control={form.control}
-                                        name='addressId'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Địa chỉ giao hàng</FormLabel>
-                                                <Select onValueChange={field.onChange} value={field.value}>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder='Chọn địa chỉ giao hàng' />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {addressList.map((address) => (
-                                                            <SelectItem
-                                                                key={address.id}
-                                                                value={String(address.id ?? 0)}
-                                                            >
-                                                                {address.addressDetail}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+            {showPayOS ? (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Thanh toán qua PayOS</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <PayOSForm
+                            paymentOSRequest={{
+                                items: [],
+                                amount: Number(orderSummary.total.toFixed(2)),
+                                description: `Thanh toán đơn hàng cho ${customer?.firstName} ${customer?.lastName}`
+                            }}
+                            setVisible={setShowPayOS}
+                            setAmountPaid={setAmountPaid}
+                        />
+                    </CardContent>
+                </Card>
+            ) : (
+                <div className='grid grid-cols-1 lg:grid-cols-12 gap-6'>
+                    {/* Form thanh toán */}
+                    <div className='lg:col-span-7'>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Thông tin thanh toán</CardTitle>
+                                <CardDescription>Vui lòng điền đầy đủ thông tin đặt hàng</CardDescription>
+                            </CardHeader>
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)}>
+                                    <CardContent className='space-y-4'>
+                                        {/* Địa chỉ giao hàng */}
+                                        <FormField
+                                            control={form.control}
+                                            name='addressId'
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Địa chỉ giao hàng</FormLabel>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder='Chọn địa chỉ giao hàng' />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {addressList.map((address) => (
+                                                                <SelectItem
+                                                                    key={address.id}
+                                                                    value={String(address.id ?? 0)}
+                                                                >
+                                                                    {address.addressDetail}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
 
-                                    {/* Ghi chú */}
-                                    <FormField
-                                        control={form.control}
-                                        name='note'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Lưu ý cho cửa hàng</FormLabel>
-                                                <FormControl>
-                                                    <Textarea
-                                                        placeholder='Nhập ghi chú cho đơn hàng (tùy chọn)'
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    {/* Voucher */}
-                                    <FormField
-                                        control={form.control}
-                                        name='voucher'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Mã giảm giá</FormLabel>
-                                                <div className='flex gap-2'>
+                                        {/* Ghi chú */}
+                                        <FormField
+                                            control={form.control}
+                                            name='note'
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Lưu ý cho cửa hàng</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder='Nhập mã giảm giá' {...field} />
+                                                        <Textarea
+                                                            placeholder='Nhập ghi chú cho đơn hàng (tùy chọn)'
+                                                            {...field}
+                                                        />
                                                     </FormControl>
-                                                    <Button type='button' variant='outline'>
-                                                        Áp dụng
-                                                    </Button>
-                                                </div>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
 
-                                    {/* Phương thức thanh toán */}
-                                    <FormField
-                                        control={form.control}
-                                        name='paymentMethod'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Phương thức thanh toán</FormLabel>
-                                                <Select onValueChange={field.onChange} value={field.value}>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder='Chọn phương thức thanh toán' />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value='cod'>Thanh toán khi nhận hàng</SelectItem>
-                                                        <SelectItem value='bank'>Thanh toán bằng ngân hàng</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </CardContent>
-                                <CardFooter>
-                                    <Button type='submit' className='w-full' disabled={loading}>
-                                        {loading ? 'Đang xử lý...' : `Thanh toán ${orderSummary.total}`}
-                                    </Button>
-                                </CardFooter>
-                            </form>
-                        </Form>
-                    </Card>
-                </div>
-
-                {/* Thông tin đơn hàng */}
-                <div className='lg:col-span-5'>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Đơn đặt hàng của bạn</CardTitle>
-                        </CardHeader>
-                        <CardContent className='space-y-4'>
-                            {/* Danh sách sản phẩm */}
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Sản phẩm</TableHead>
-                                        <TableHead className='text-right'>Tổng tiền</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {cartItems1.map((item) => (
-                                        <TableRow key={item.id}>
-                                            <TableCell>
-                                                <div className='flex items-start gap-2'>
-                                                    <Image
-                                                        src={item.image}
-                                                        alt={item.name}
-                                                        width={50}
-                                                        height={50}
-                                                        className='rounded-md'
-                                                    />
-                                                    <div>
-                                                        <p className='font-medium'>{item.name}</p>
-                                                        <p className='text-sm text-gray-500'>{item.attributeProduct}</p>
-                                                        <p className='text-sm'>
-                                                            {item.quantity} x {formatCurrency(item.unitPrice)}
-                                                        </p>
+                                        {/* Voucher */}
+                                        <FormField
+                                            control={form.control}
+                                            name='voucher'
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Mã giảm giá</FormLabel>
+                                                    <div className='flex gap-2'>
+                                                        <FormControl>
+                                                            <Input placeholder='Nhập mã giảm giá' {...field} />
+                                                        </FormControl>
+                                                        <Button type='button' variant='outline'>
+                                                            Áp dụng
+                                                        </Button>
                                                     </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className='text-right'>
-                                                {formatCurrency(item.unitPrice * item.quantity)}
-                                            </TableCell>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        {/* Phương thức thanh toán */}
+                                        <FormField
+                                            control={form.control}
+                                            name='paymentMethod'
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Phương thức thanh toán</FormLabel>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder='Chọn phương thức thanh toán' />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value='cod'>
+                                                                Thanh toán khi nhận hàng
+                                                            </SelectItem>
+                                                            <SelectItem value='bank'>
+                                                                Thanh toán bằng ngân hàng
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button type='submit' className='w-full' disabled={loading}>
+                                            {loading
+                                                ? 'Đang xử lý...'
+                                                : `Thanh toán ${formatCurrency(orderSummary.total)}`}
+                                        </Button>
+                                    </CardFooter>
+                                </form>
+                            </Form>
+                        </Card>
+                    </div>
+
+                    {/* Thông tin đơn hàng */}
+                    <div className='lg:col-span-5'>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Đơn đặt hàng của bạn</CardTitle>
+                            </CardHeader>
+                            <CardContent className='space-y-4'>
+                                {/* Danh sách sản phẩm */}
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Sản phẩm</TableHead>
+                                            <TableHead className='text-right'>Tổng tiền</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-
-                            <Separator />
-
-                            {/* Chi tiết thanh toán */}
-                            <div className='space-y-2'>
-                                <div className='flex justify-between'>
-                                    <span>Tổng phụ:</span>
-                                    <span>{formatCurrency(orderSummary.subtotal)}</span>
-                                </div>
-
-                                <div className='flex justify-between'>
-                                    <span>Phí vận chuyển:</span>
-                                    <span>{formatCurrency(orderSummary.shippingFee)}</span>
-                                </div>
-
-                                {orderSummary.discounts.promotions > 0 && (
-                                    <div className='flex justify-between text-green-600'>
-                                        <span>Giảm giá:</span>
-                                        <span> -{formatCurrency(orderSummary.discounts.promotions)}</span>
-                                    </div>
-                                )}
-
-                                {orderSummary.discounts.vouchers > 0 && (
-                                    <div className='flex justify-between text-green-600'>
-                                        <span>Phiếu giảm giá:</span>
-                                        <span>-{orderSummary.discounts.vouchers}</span>
-                                    </div>
-                                )}
+                                    </TableHeader>
+                                    <TableBody>
+                                        {cartItems1.map((item) => (
+                                            <TableRow key={item.id}>
+                                                <TableCell>
+                                                    <div className='flex items-start gap-2'>
+                                                        <Image
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            width={50}
+                                                            height={50}
+                                                            className='rounded-md'
+                                                        />
+                                                        <div>
+                                                            <p className='font-medium'>{item.name}</p>
+                                                            <p className='text-sm text-gray-500'>
+                                                                {item.attributeProduct}
+                                                            </p>
+                                                            <p className='text-sm'>
+                                                                {item.quantity} x {formatCurrency(item.unitPrice)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className='text-right'>
+                                                    {formatCurrency(item.unitPrice * item.quantity)}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
 
                                 <Separator />
 
-                                <div className='flex justify-between font-medium text-lg'>
-                                    <span>Tổng tiền:</span>
-                                    <span>{formatCurrency(orderSummary.total)}</span>
+                                {/* Chi tiết thanh toán */}
+                                <div className='space-y-2'>
+                                    <div className='flex justify-between'>
+                                        <span>Tổng phụ:</span>
+                                        <span>{formatCurrency(orderSummary.subtotal)}</span>
+                                    </div>
+
+                                    <div className='flex justify-between'>
+                                        <span>Phí vận chuyển:</span>
+                                        <span>{formatCurrency(orderSummary.shippingFee)}</span>
+                                    </div>
+
+                                    {orderSummary.discounts.promotions > 0 && (
+                                        <div className='flex justify-between text-green-600'>
+                                            <span>Giảm giá:</span>
+                                            <span> -{formatCurrency(orderSummary.discounts.promotions)}</span>
+                                        </div>
+                                    )}
+
+                                    {orderSummary.discounts.vouchers > 0 && (
+                                        <div className='flex justify-between text-green-600'>
+                                            <span>Phiếu giảm giá:</span>
+                                            <span>-{orderSummary.discounts.vouchers}</span>
+                                        </div>
+                                    )}
+
+                                    <Separator />
+
+                                    <div className='flex justify-between font-medium text-lg'>
+                                        <span>Tổng tiền:</span>
+                                        <span>{formatCurrency(orderSummary.total)}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }
