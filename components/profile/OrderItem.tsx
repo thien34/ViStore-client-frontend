@@ -29,19 +29,9 @@ type OrderItemProps = {
 
 const OrderItem = ({ order }: OrderItemProps) => {
     const [products, setProducts] = useState<Product[]>([])
-    const [orderItemsResponse, setOrderItemsResponse] = useState<OrderItemsResponse[]>([])
-
-    const fetchProducts = useCallback(async () => {
+    const fetchProducts = async () => {
         const { payload: response } = await OrderService.getOrderItems(order.id)
-        setOrderItemsResponse(response)
-    }, [order.id])
-
-    useEffect(() => {
-        fetchProducts()
-    }, [fetchProducts])
-
-    useEffect(() => {
-        const data: Product[] = orderItemsResponse.map((item) => {
+        const data: Product[] = response.map((item) => {
             const product = JSON.parse(item.productJson)
             return {
                 id: product.id,
@@ -60,7 +50,33 @@ const OrderItem = ({ order }: OrderItemProps) => {
             }
         })
         setProducts(data)
-    }, [orderItemsResponse])
+    }
+
+    // useEffect(() => {
+    //     fetchProducts()
+    // }, [fetchProducts])
+
+    // useEffect(() => {
+    //     const data: Product[] = orderItemsResponse.map((item) => {
+    //         const product = JSON.parse(item.productJson)
+    //         return {
+    //             id: product.id,
+    //             name: product.name,
+    //             unitPrice: product.unitPrice,
+    //             discountPrice: product.discountPrice,
+    //             quantity: item.quantity,
+    //             attributes: product.productAttributeValues.map((attr: ProductAttribute) => ({
+    //                 id: attr.id,
+    //                 name: attr.productAttribute.name,
+    //                 value: attr.value
+    //             })),
+    //             largestDiscountPercentage: product.largestDiscountPercentage || 0,
+    //             cartUUID: item.orderItemGuid,
+    //             imageUrl: product.image
+    //         }
+    //     })
+    //     setProducts(data)
+    // }, [orderItemsResponse])
 
     return (
         <Card className='w-full py-4 px-6 border-none shadow-none bg-muted/80 rounded-2xl'>
@@ -105,7 +121,14 @@ const OrderItem = ({ order }: OrderItemProps) => {
                         <p className='text-primary font-semibold'>{formatCurrency(order.orderTotal)}</p>
                     </div>
                 </div>
-                <Collapsible className='bg-white rounded-3xl overflow-hidden px-8 py-2'>
+                <Collapsible
+                    onOpenChange={(open) => {
+                        if (open) {
+                            fetchProducts()
+                        }
+                    }}
+                    className='bg-white rounded-3xl overflow-hidden px-8 py-2'
+                >
                     <CollapsibleTrigger asChild>
                         <Button
                             variant='ghost'
