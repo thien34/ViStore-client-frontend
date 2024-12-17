@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CartResponse } from '@/interface/cart.interface'
 import Link from 'next/link'
+import { formatCurrency } from '@/lib/utils'
 
 interface CartItemProps {
     item: CartResponse
@@ -55,11 +56,13 @@ export default function CartItem({ item, isSelected, onSelect, onUpdateQuantity,
                         <div className='text-red-500 font-medium'>
                             {item.discountPrice > 0 ? (
                                 <div className='flex gap-2 items-center'>
-                                    <p className='font-medium text-primary'>&#36; {item.discountPrice}</p>
-                                    <p className='text-xs text-gray-500 line-through'>&#36; {item.unitPrice}</p>
+                                    <p className='font-medium text-primary'> {formatCurrency(item.discountPrice)}</p>
+                                    <p className='text-xs text-gray-500 line-through'>
+                                        {formatCurrency(item.unitPrice)}
+                                    </p>
                                 </div>
                             ) : (
-                                <p className='font-medium text-primary'>&#36; {item.unitPrice}</p>
+                                <p className='font-medium text-primary'> {formatCurrency(item.unitPrice)}</p>
                             )}
                         </div>
                         <div className='space-y-1'>

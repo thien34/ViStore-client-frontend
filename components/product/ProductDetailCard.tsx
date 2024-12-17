@@ -9,6 +9,7 @@ import { useToast } from '../ui/use-toast'
 import { Input } from '@/components/ui/input'
 import { CustomerFullResponse } from '@/interface/auth.interface'
 import { useCartStore } from '@/store/useCartStore'
+import { formatCurrency } from '@/lib/utils'
 
 export default function ProductDetailCard({ product }: { product: ProductDetail }) {
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
@@ -131,14 +132,14 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                     {displayPrice.discountPrice > 0 ? (
                         <>
                             <h2 className='p-2 text-xl font-medium text-primary'>
-                                Giá: &#36; {displayPrice.discountPrice}
+                                Giá: {formatCurrency(displayPrice.discountPrice)}
                             </h2>
                             <div className='ml-2 line-through text-sm text-gray-500'>
-                                &#36; {displayPrice.unitPrice}
+                                {formatCurrency(displayPrice.unitPrice)}
                             </div>
                             <p className='text-xs ml-2 bg-red-200 text-red-600 p-[3px] rounded-sm'>
                                 -
-                                {Math.round(
+                                {formatCurrency(
                                     ((displayPrice.unitPrice - displayPrice.discountPrice) / displayPrice.unitPrice) *
                                         100
                                 )}
@@ -146,7 +147,9 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                             </p>
                         </>
                     ) : (
-                        <h2 className='p-2 text-xl font-medium text-primary'>Giá: &#36; {displayPrice.unitPrice}</h2>
+                        <h2 className='p-2 text-xl font-medium text-primary'>
+                            Giá: {formatCurrency(displayPrice.unitPrice)}
+                        </h2>
                     )}
                 </div>
 

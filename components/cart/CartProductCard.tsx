@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Button } from '../ui/button'
 import { Card, CardContent } from '../ui/card'
 import { CartResponse } from '@/interface/cart.interface'
+import { formatCurrency } from '@/lib/utils'
 
 export default function CartProductCard({
     product,
@@ -33,11 +34,13 @@ export default function CartProductCard({
                         <div className='line-clamp-2 text-sm font-medium leading-tight'>{product.name}</div>
                         {product.discountPrice > 0 ? (
                             <div className='flex gap-2 items-center'>
-                                <p className='font-medium text-primary'>&#36; {product.discountPrice}</p>
-                                <p className='text-xs text-gray-500 line-through'>&#36; {product.unitPrice}</p>
+                                <p className='font-medium text-primary'> {formatCurrency(product.discountPrice)}</p>
+                                <p className='text-xs text-gray-500 line-through'>
+                                    {formatCurrency(product.unitPrice)}
+                                </p>
                             </div>
                         ) : (
-                            <p className='font-medium text-primary'>&#36; {product.unitPrice}</p>
+                            <p className='font-medium text-primary'> {formatCurrency(product.unitPrice)}</p>
                         )}
                         <div className='text-xs text-gray-500 bg-gray-100 inline-block p-1 m-1 rounded'>
                             {product.attributeProduct}
