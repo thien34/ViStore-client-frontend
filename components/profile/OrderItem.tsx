@@ -3,10 +3,10 @@ import { ChevronDown, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import Link from 'next/link'
-import { OrderItemsResponse, OrderResponse, PaymentMethodType } from '@/interface/order.interface'
+import { OrderResponse, PaymentMethodType } from '@/interface/order.interface'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
 import StatusOrder from './order/StatusOrder'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import OrderService from '@/service/order.service'
 import { ProductAttribute } from '@/interface/product.interface'
 import CartItem from './order/CartItem'
@@ -51,32 +51,6 @@ const OrderItem = ({ order }: OrderItemProps) => {
         })
         setProducts(data)
     }
-
-    // useEffect(() => {
-    //     fetchProducts()
-    // }, [fetchProducts])
-
-    // useEffect(() => {
-    //     const data: Product[] = orderItemsResponse.map((item) => {
-    //         const product = JSON.parse(item.productJson)
-    //         return {
-    //             id: product.id,
-    //             name: product.name,
-    //             unitPrice: product.unitPrice,
-    //             discountPrice: product.discountPrice,
-    //             quantity: item.quantity,
-    //             attributes: product.productAttributeValues.map((attr: ProductAttribute) => ({
-    //                 id: attr.id,
-    //                 name: attr.productAttribute.name,
-    //                 value: attr.value
-    //             })),
-    //             largestDiscountPercentage: product.largestDiscountPercentage || 0,
-    //             cartUUID: item.orderItemGuid,
-    //             imageUrl: product.image
-    //         }
-    //     })
-    //     setProducts(data)
-    // }, [orderItemsResponse])
 
     return (
         <Card className='w-full py-4 px-6 border-none shadow-none bg-muted/80 rounded-2xl'>

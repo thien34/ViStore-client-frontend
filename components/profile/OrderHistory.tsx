@@ -17,6 +17,20 @@ export function OrderHistory() {
         loadOrders()
     }, [])
 
+    // setTimeinterval call api to get new orders update status order every 5 minutes
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const userDataString = localStorage.getItem('user')
+            const userData = userDataString ? JSON.parse(userDataString) : null
+            const loadOrders = async () => {
+                const { payload: response } = await OrderService.getOrdersByCustomer(userData.customerInfo.id)
+                setOrders(response)
+            }
+            loadOrders()
+        }, 2000)
+        return () => clearInterval(interval)
+    }, [])
+
     return (
         <div className='pt-2 mb-4'>
             <div className='mt-3 space-y-3'>

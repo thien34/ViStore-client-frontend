@@ -1,8 +1,5 @@
-import { MoreHorizontal } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import InforDetailOrder from '@/components/profile/order/InforDetailOrder'
 import TrackOrder from '@/components/profile/order/TrackOrder'
 import StatusOrder from '@/components/profile/order/StatusOrder'
@@ -13,6 +10,7 @@ import CartOrders from '@/components/profile/order/CartOrders'
 import { notFound } from 'next/navigation'
 import PrintInvoice from '@/components/profile/order/PrintInvoice'
 import PrintInvoiceButton from '@/components/profile/order/PrintInvoiceButton'
+import UpdateStatus from '@/components/profile/order/UpdateStatus'
 
 type Props = {
     params: { id: string }
@@ -25,13 +23,10 @@ const Page = async ({ params }: Props) => {
     const { payload: customerOrder } = await OrderService.getCustomerOrder(Number(params.id))
     const { payload: orderStatus } = await OrderService.getOrderStatusHistory(params.id)
 
-    const handlePrint = () => {
-        window.print()
-    }
-
     return (
         <>
             <div className='pt-2 mb-4 px-20'>
+                <UpdateStatus />
                 <Card className='border-none shadow-none'>
                     <CardHeader className='space-y-4 pt-0'>
                         <div className='flex justify-between items-center gap-4'>
