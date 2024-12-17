@@ -99,7 +99,7 @@ const CheckoutPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [form, addressList.length, form.watch('addressId')])
 
-    // Tính toán shipping fee và cập nhật order summary
+    // Cập nhật order summary
     useEffect(() => {
         const calculateOrder = async () => {
             if (cartItems1.length === 0) return
@@ -134,13 +134,6 @@ const CheckoutPage = () => {
         setLoading(true)
         try {
             if (data.paymentMethod === 'bank') {
-                const paymentOSRequest = {
-                    amount: orderSummary.total,
-                    orderId: uuidv4(),
-                    description: `Thanh toán đơn hàng cho ${customer?.firstName} ${customer?.lastName}`,
-                    cancelUrl: window.location.href,
-                    returnUrl: `${window.location.origin}/checkout/success`
-                }
                 setShowPayOS(true)
                 return
             }
@@ -218,8 +211,6 @@ const CheckoutPage = () => {
 
     useEffect(() => {
         if (amountPaid > 0) {
-            // Process successful payment
-            // You may want to create the order here after successful payment
             router.push('/checkout/success')
         }
     }, [amountPaid, router])
@@ -236,7 +227,7 @@ const CheckoutPage = () => {
                             paymentOSRequest={{
                                 items: [],
                                 amount: Number(orderSummary.total.toFixed(2)),
-                                description: `Thanh toán đơn hàng cho ${customer?.firstName} ${customer?.lastName}`
+                                description: `Thanh toán đơn hàng `
                             }}
                             setVisible={setShowPayOS}
                             setAmountPaid={setAmountPaid}

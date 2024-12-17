@@ -34,7 +34,7 @@ export default function CartSummary({ selectedItems, items, onCheckout, onSelect
                 <div className='flex-1 md:flex md:justify-end m-2'>
                     <div className='space-y-1 md:text-right'>
                         <div className='text-sm text-gray-500'>Tổng thanh toán ({totalItems} sản phẩm):</div>
-                        <div className='text-xl text-red-500 font-medium'>${formatCurrency(totalPrice)}</div>
+                        <div className='text-xl text-red-500 font-medium'>{formatCurrency(totalPrice)}</div>
                     </div>
                 </div>
 
