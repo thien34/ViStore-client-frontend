@@ -110,7 +110,7 @@ const CheckoutPage = () => {
                 const subtotal = cartItems1.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
 
                 // Tính các loại giảm giá
-                const promotionDiscount = 10 // Mock promotion discount
+                const promotionDiscount = 0 // Mock promotion discount
                 const voucherDiscount = form.getValues('voucher') ? 12 : 0 // Mock voucher discount
 
                 setOrderSummary({
@@ -290,7 +290,7 @@ const CheckoutPage = () => {
                                         />
 
                                         {/* Voucher */}
-                                        <FormField
+                                        {/* <FormField
                                             control={form.control}
                                             name='voucher'
                                             render={({ field }) => (
@@ -307,7 +307,7 @@ const CheckoutPage = () => {
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
-                                        />
+                                        /> */}
 
                                         {/* Phương thức thanh toán */}
                                         <FormField
