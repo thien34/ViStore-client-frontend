@@ -42,7 +42,7 @@ const Page = async ({ params }: Props) => {
                                 </p>
                             </div>
                             <div className='space-x-3 flex items-center'>
-                                <Button size={'sm'} className='py-2 rounded-full border border-primary'>
+                                {/* <Button size={'sm'} className='py-2 rounded-full border border-primary'>
                                     Nhận hàng
                                 </Button>
                                 <Button
@@ -51,7 +51,7 @@ const Page = async ({ params }: Props) => {
                                     className='py-2 rounded-full border-primary text-primary hover:text-primary hover:bg-primary/10'
                                 >
                                     Hủy đơn hàng
-                                </Button>
+                                </Button> */}
                                 <PrintInvoiceButton />
                             </div>
                         </div>

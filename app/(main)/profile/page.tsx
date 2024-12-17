@@ -29,10 +29,10 @@ export default function ProfilePage() {
         <div className='container mx-auto py-6'>
             <h1 className='text-3xl font-bold mb-6'>Hồ sơ của tôi</h1>
             <Tabs defaultValue='personal' className='w-full'>
-                <TabsList className='grid w-full grid-cols-4'>
+                <TabsList className='grid w-full grid-cols-3'>
                     <TabsTrigger value='personal'>Thông tin</TabsTrigger>
                     <TabsTrigger value='addresses'>Địa chỉ</TabsTrigger>
-                    <TabsTrigger value='password'>Đổi mật khẩu</TabsTrigger>
+                    {/* <TabsTrigger value='password'>Đổi mật khẩu</TabsTrigger> */}
                     <TabsTrigger value='orders'>Đơn hàng</TabsTrigger>
                 </TabsList>
 
