@@ -3,15 +3,16 @@ import React, { useState, useMemo, useEffect } from 'react'
 import ProductCarousel from './ProductCarousel'
 import { ProductDetail } from '@/interface/product.interface'
 import { Button } from '../ui/button'
-import Link from 'next/link'
 import { PlusIcon, MinusIcon, ShoppingCart } from 'lucide-react'
 import { useToast } from '../ui/use-toast'
 import { Input } from '@/components/ui/input'
 import { CustomerFullResponse } from '@/interface/auth.interface'
 import { useCartStore } from '@/store/useCartStore'
 import { formatCurrency } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 export default function ProductDetailCard({ product }: { product: ProductDetail }) {
+    const router = useRouter()
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
     const [showWarnings, setShowWarnings] = useState<Record<string, boolean>>({})
     const [quantity, setQuantity] = useState(1)
@@ -49,6 +50,35 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
             toast({
                 title: 'Lỗi',
                 description: 'Không thể thêm mặt hàng vào giỏ hàng',
+                variant: 'destructive'
+            })
+        }
+    }
+
+    const handleBuyNow = async () => {
+        if (!customerInfo?.id) {
+            toast({
+                title: 'Lỗi',
+                description: 'Vui lòng đăng nhập để mua hàng',
+                variant: 'destructive'
+            })
+            return
+        }
+        if (!selectedVariant) {
+            toast({
+                title: 'Lỗi',
+                description: 'Vui lòng chọn tất cả các tùy chọn sản phẩm',
+                variant: 'destructive'
+            })
+            return
+        }
+        try {
+            await addToCart({ customerId: customerInfo.id, productId: selectedVariant.id, quantity })
+            router.push('/cart')
+        } catch (error: any) {
+            toast({
+                title: 'Lỗi',
+                description: error?.response?.data?.message,
                 variant: 'destructive'
             })
         }
@@ -227,15 +257,14 @@ export default function ProductDetailCard({ product }: { product: ProductDetail 
                         <ShoppingCart className='absolute left-0 ml-4 h-6 w-6' />
                         Thêm vào giỏ
                     </Button>
-                    <Link href='/cart'>
-                        <Button
-                            variant='default'
-                            className='relative mt-2 w-full rounded-full border transition duration-100 active:scale-95'
-                            disabled={!selectedVariant?.quantity || quantity === 0}
-                        >
-                            Mua ngay
-                        </Button>
-                    </Link>
+                    <Button
+                        onClick={handleBuyNow}
+                        variant='default'
+                        className='relative mt-2 w-full rounded-full border transition duration-100 active:scale-95'
+                        disabled={!selectedVariant?.quantity || quantity === 0}
+                    >
+                        Mua ngay
+                    </Button>
                 </div>
             </div>
         </section>

@@ -163,7 +163,7 @@ const CheckoutPage = () => {
                 orderTotal: orderSummary.total,
                 refundedAmount: 0,
                 paidDateUtc: '',
-                billCode: '',
+                billCode: `VS${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
                 deliveryMode: 1,
                 orderItems: cartItems1.map((item) => ({
                     productId: item.idProduct,
@@ -188,25 +188,27 @@ const CheckoutPage = () => {
                 },
                 idVouchers: []
             }
-            OrderService.createOrder(order).then(async (res) => {
-                if (res.status === 200) {
+            OrderService.createOrder(order)
+                .then(async (res) => {
+                    if (res.status === 200) {
+                        toast({
+                            title: 'Thanh toán thành công',
+                            description: 'Đơn hàng của bạn đã được đặt thành công',
+                            variant: 'default'
+                        })
+                        cartItems1.forEach(async (item) => {
+                            deleteFromCart(customer?.id ?? -1, item.id)
+                        })
+                        router.push('/checkout/success')
+                    }
+                })
+                .catch((error) => {
                     toast({
-                        title: 'Thanh toán thành công',
-                        description: 'Đơn hàng của bạn đã được đặt thành công',
+                        title: 'Đặt hàng thất bại',
+                        description: error.response.data.message,
                         variant: 'default'
                     })
-                    cartItems1.forEach(async (item) => {
-                        deleteFromCart(customer?.id ?? -1, item.id)
-                    })
-                    router.push('/checkout/success')
-                }
-            }).catch((error) => {
-                toast({
-                    title: 'Đặt hàng thất bại',
-                    description: error.response.data.message,
-                    variant: 'default'
                 })
-            })
         } catch (error) {
             console.log('Lỗi tạo lệnh:', error)
         } finally {
