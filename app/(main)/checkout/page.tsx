@@ -8,11 +8,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/components/ui/use-toast'
-import { OrderSummary, ShippingCalculation } from '@/interface/checkout'
-import { calculateShippingFee } from '@/service/shipping.service'
+import { OrderSummary } from '@/interface/checkout'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -24,6 +22,7 @@ import { CustomerFullResponse } from '@/interface/auth.interface'
 import OrderService from '@/service/order.service'
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/navigation'
+import { formatCurrency } from '@/lib/utils'
 
 const formSchema = z.object({
     addressId: z.string().min(1, 'Vui lòng chọn địa chỉ giao hàng'),
@@ -39,14 +38,13 @@ const CheckoutPage = () => {
     const [addressList, setAddressList] = useState<AddressesResponse[]>([])
     const [orderSummary, setOrderSummary] = useState<OrderSummary>({
         subtotal: 0,
-        shippingFee: 0,
+        shippingFee: 30000,
         discounts: {
             promotions: 0,
             vouchers: 0
         },
         total: 0
     })
-    const [shippingInfo, setShippingInfo] = useState<ShippingCalculation | null>(null)
     const [loading, setLoading] = useState(false)
     const [customer, setCustomer] = useState<CustomerFullResponse>()
     const [addressDetail, setAddressDetail] = useState<AddressRequest>()
@@ -107,47 +105,18 @@ const CheckoutPage = () => {
                 // Tính tổng tiền hàng
                 const subtotal = cartItems1.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
 
-                // Chuẩn bị dữ liệu cho GHN API
-                const shippingRequest = {
-                    service_type_id: 5,
-                    from_district_id: 3440,
-                    from_ward_code: '13010',
-                    to_district_id: Number(addressDetail?.districtId),
-                    to_ward_code: addressDetail?.wardId,
-                    height: 10,
-                    length: 15,
-                    weight: cartItems1.reduce((total, item) => total + 500 * item.quantity, 0), // Giả sử mỗi sản phẩm 500g
-                    width: 20,
-                    insurance_value: 0,
-                    coupon: null,
-                    items: cartItems1.map((item) => ({
-                        name: item.name,
-                        quantity: item.quantity,
-                        height: 10,
-                        weight: 50, // 50g mỗi sản phẩm
-                        length: 15,
-                        width: 10
-                    }))
-                }
-
-                // Gọi API tính phí ship
-                const shippingCalc = await calculateShippingFee(shippingRequest)
-
                 // Tính các loại giảm giá
                 const promotionDiscount = 10 // Mock promotion discount
                 const voucherDiscount = form.getValues('voucher') ? 12 : 0 // Mock voucher discount
 
-                setShippingInfo(shippingCalc)
                 setOrderSummary({
                     subtotal,
-                    shippingFee: Number((shippingCalc.total / 25000).toFixed(2)),
+                    shippingFee: 30000,
                     discounts: {
                         promotions: promotionDiscount,
                         vouchers: voucherDiscount
                     },
-                    total: Number(
-                        (subtotal + shippingCalc.total / 25000 - promotionDiscount - voucherDiscount).toFixed(2)
-                    )
+                    total: Number((subtotal + 30000 - promotionDiscount - voucherDiscount).toFixed(2))
                 })
             } catch (error: any) {
                 console.error('Lỗi tính toán đơn hàng:', error)
@@ -325,7 +294,7 @@ const CheckoutPage = () => {
                                 </CardContent>
                                 <CardFooter>
                                     <Button type='submit' className='w-full' disabled={loading}>
-                                        {loading ? 'Đang xử lý...' : `Thanh toán $${orderSummary.total}`}
+                                        {loading ? 'Đang xử lý...' : `Thanh toán ${orderSummary.total}`}
                                     </Button>
                                 </CardFooter>
                             </form>
@@ -364,13 +333,13 @@ const CheckoutPage = () => {
                                                         <p className='font-medium'>{item.name}</p>
                                                         <p className='text-sm text-gray-500'>{item.attributeProduct}</p>
                                                         <p className='text-sm'>
-                                                            {item.quantity} x ${item.unitPrice}
+                                                            {item.quantity} x {formatCurrency(item.unitPrice)}
                                                         </p>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell className='text-right'>
-                                                ${item.unitPrice * item.quantity}
+                                                {formatCurrency(item.unitPrice * item.quantity)}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -383,27 +352,25 @@ const CheckoutPage = () => {
                             <div className='space-y-2'>
                                 <div className='flex justify-between'>
                                     <span>Tổng phụ:</span>
-                                    <span>${orderSummary.subtotal}</span>
+                                    <span>{formatCurrency(orderSummary.subtotal)}</span>
                                 </div>
 
-                                {shippingInfo && (
-                                    <div className='flex justify-between'>
-                                        <span>Phí vận chuyển({shippingInfo.service_name}):</span>
-                                        <span>${orderSummary.shippingFee}</span>
-                                    </div>
-                                )}
+                                <div className='flex justify-between'>
+                                    <span>Phí vận chuyển:</span>
+                                    <span>{formatCurrency(orderSummary.shippingFee)}</span>
+                                </div>
 
                                 {orderSummary.discounts.promotions > 0 && (
                                     <div className='flex justify-between text-green-600'>
                                         <span>Giảm giá:</span>
-                                        <span>-${orderSummary.discounts.promotions}</span>
+                                        <span> -{formatCurrency(orderSummary.discounts.promotions)}</span>
                                     </div>
                                 )}
 
                                 {orderSummary.discounts.vouchers > 0 && (
                                     <div className='flex justify-between text-green-600'>
                                         <span>Phiếu giảm giá:</span>
-                                        <span>-${orderSummary.discounts.vouchers}</span>
+                                        <span>-{orderSummary.discounts.vouchers}</span>
                                     </div>
                                 )}
 
@@ -411,17 +378,9 @@ const CheckoutPage = () => {
 
                                 <div className='flex justify-between font-medium text-lg'>
                                     <span>Tổng tiền:</span>
-                                    <span>${orderSummary.total}</span>
+                                    <span>{formatCurrency(orderSummary.total)}</span>
                                 </div>
                             </div>
-
-                            {shippingInfo && (
-                                <Alert>
-                                    <AlertDescription>
-                                        Dự kiến giao hàng: {shippingInfo.estimated_delivery_time}
-                                    </AlertDescription>
-                                </Alert>
-                            )}
                         </CardContent>
                     </Card>
                 </div>

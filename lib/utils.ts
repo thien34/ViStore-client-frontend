@@ -16,3 +16,10 @@ export const formatCurrency = (amount: number) => {
 export const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('vi-VN')
 }
+
+export const formatDateTime = (dateTime: string) => {
+    const date = new Date(dateTime)
+    const formattedDate = date.toLocaleDateString('vi-VN')
+    const formattedTime = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+    return `${formattedDate} ${formattedTime}`
+}
