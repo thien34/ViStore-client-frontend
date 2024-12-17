@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { useState, useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
@@ -130,10 +131,10 @@ const CheckoutPage = () => {
         calculateOrder()
     }, [form, cartItems1, addressDetail])
 
-    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const onSubmit = async (data: z.infer<typeof formSchema>, checkMethod: boolean) => {
         setLoading(true)
         try {
-            if (data.paymentMethod === 'bank') {
+            if (data.paymentMethod === 'bank' && checkMethod) {
                 setShowPayOS(true)
                 return
             }
@@ -209,12 +210,6 @@ const CheckoutPage = () => {
         }
     }
 
-    useEffect(() => {
-        if (amountPaid > 0) {
-            router.push('/checkout/success')
-        }
-    }, [amountPaid, router])
-
     return (
         <div className='container mx-auto p-4'>
             {showPayOS ? (
@@ -230,7 +225,10 @@ const CheckoutPage = () => {
                                 description: `Thanh toán đơn hàng `
                             }}
                             setVisible={setShowPayOS}
-                            setAmountPaid={setAmountPaid}
+                            setAmountPaid={(value) => {
+                                setAmountPaid(value)
+                                onSubmit(form.getValues(), false)
+                            }}
                         />
                     </CardContent>
                 </Card>
@@ -244,7 +242,7 @@ const CheckoutPage = () => {
                                 <CardDescription>Vui lòng điền đầy đủ thông tin đặt hàng</CardDescription>
                             </CardHeader>
                             <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)}>
+                                <form onSubmit={() => onSubmit(form.getValues(), true)}>
                                     <CardContent className='space-y-4'>
                                         {/* Địa chỉ giao hàng */}
                                         <FormField
